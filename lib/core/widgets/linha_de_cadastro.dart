@@ -14,7 +14,7 @@ class LinhaDeCadastro extends StatelessWidget {
   });
 
   static const margemHorizontal = 20.0;
-  static const larguraDaSituacao = 120.0;
+  static const larguraDaSituacao = 148.0;
   static const larguraDoMenu = 48.0;
 
   final String titulo;

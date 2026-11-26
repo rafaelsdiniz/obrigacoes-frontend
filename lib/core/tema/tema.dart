@@ -16,6 +16,7 @@ abstract final class Cores {
   static const atencao = Color(0xFF8A5300);
   static const informacao = Color(0xFF2453C2);
   static const erro = Color(0xFFB42318);
+  static const erroSuave = Color(0xFFFDECEA);
   static const bordaDoCampo = Color(0xFF8A8A92);
   static const sobreposicao = Color(0x0A1D1D1F);
 }

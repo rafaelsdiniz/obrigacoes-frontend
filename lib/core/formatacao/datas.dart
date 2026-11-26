@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 abstract final class Datas {
   static DateTime daApi(String valor) {
     final partes = valor.split('-').map(int.parse).toList();
@@ -55,4 +57,25 @@ class Competencia {
 
   @override
   int get hashCode => Object.hash(ano, mes);
+}
+
+class MascaraCompetencia extends TextInputFormatter {
+  static const _tamanho = 6;
+  static const _digitosDoMes = 2;
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue anterior, TextEditingValue atual) {
+    final digitos = atual.text.replaceAll(RegExp(r'\D'), '');
+    final limitados = digitos.length > _tamanho ? digitos.substring(0, _tamanho) : digitos;
+    final texto = limitados.length > _digitosDoMes
+        ? '${limitados.substring(0, _digitosDoMes)}/${limitados.substring(_digitosDoMes)}'
+        : limitados;
+    final fimDoCursor = atual.selection.end.clamp(0, atual.text.length);
+    final digitosAntesDoCursor = atual.text.substring(0, fimDoCursor).replaceAll(RegExp(r'\D'), '').length;
+    final posicao = digitosAntesDoCursor.clamp(0, limitados.length);
+    return TextEditingValue(
+      text: texto,
+      selection: TextSelection.collapsed(offset: posicao > _digitosDoMes ? posicao + 1 : posicao),
+    );
+  }
 }

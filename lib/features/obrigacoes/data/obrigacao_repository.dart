@@ -25,7 +25,6 @@ class ObrigacaoRepository {
       parametros: {
         'busca': filtro.busca.trim(),
         'status': [for (final status in filtro.status) status.valorApi],
-        'tipo': filtro.tipo?.valorApi,
         'atrasada': filtro.somenteAtrasadas ? true : null,
         'page': filtro.pagina,
         'size': tamanhoDaPagina,

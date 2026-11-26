@@ -4,15 +4,27 @@ Aplicativo Flutter (web e Android) para gerenciamento das obrigações das empre
 
 Consome a API do repositório [obrigacoes-backend](https://github.com/rafaelsdiniz/obrigacoes-backend), onde também está a [documentação completa do sistema](https://github.com/rafaelsdiniz/obrigacoes-backend/tree/main/docs). O andamento do projeto está no [quadro do Trello](https://trello.com/b/lO3pOAnQ/sistema-de-gerenciamento-de-obrigacoes-player).
 
-![Lista de empresas](docs/telas/empresas.png)
+![Painel](docs/telas/painel.png)
 
-| Usuários | Edição de empresa |
+| Obrigações | Detalhe da obrigação |
 |---|---|
-| ![Lista de usuários](docs/telas/usuarios.png) | ![Edição de empresa](docs/telas/empresa-edicao.png) |
+| ![Obrigações](docs/telas/obrigacoes.png) | ![Detalhe](docs/telas/obrigacao-detalhe.png) |
 
-| Celular | Cadastro no celular | Tablet |
+| Nova obrigação | Empresas |
+|---|---|
+| ![Nova obrigação](docs/telas/obrigacao-nova.png) | ![Empresas](docs/telas/empresas.png) |
+
+| Painel no celular | Obrigações no celular | Detalhe no celular |
 |---|---|---|
-| ![Empresas no celular](docs/telas/empresas-celular.png) | ![Cadastro no celular](docs/telas/empresa-nova-celular.png) | ![Empresas no tablet](docs/telas/empresas-tablet.png) |
+| ![](docs/telas/painel-celular.png) | ![](docs/telas/obrigacoes-celular.png) | ![](docs/telas/obrigacao-detalhe-celular.png) |
+
+| Edição de empresa | Usuários |
+|---|---|
+| ![Edição de empresa](docs/telas/empresa-edicao.png) | ![Usuários](docs/telas/usuarios.png) |
+
+| Empresas no celular | Cadastro no celular | Tablet |
+|---|---|---|
+| ![](docs/telas/empresas-celular.png) | ![](docs/telas/empresa-nova-celular.png) | ![](docs/telas/empresas-tablet.png) |
 
 ## Tecnologias
 
@@ -72,6 +84,8 @@ lib/
 │   ├── http/                 cliente da API, erros (Problem Details), página e parâmetros
 │   └── widgets/              componentes da interface: cabeçalho, grupo, linhas, selos, filtros, formulários
 └── features/
+    ├── painel/               indicadores e próximos vencimentos
+    ├── obrigacoes/           lista, detalhe com andamento e histórico, formulário, regras de prazo
     ├── empresas/             data (repositório), domain (modelo) e presentation (telas, estado e rotas)
     └── usuarios/
 ```

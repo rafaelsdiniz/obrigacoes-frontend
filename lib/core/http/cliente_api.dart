@@ -23,28 +23,25 @@ class ClienteApi {
 
   final Dio _dio;
 
-  Future<Json> get(String caminho, {Map<String, Object?> parametros = const {}}) =>
-      _executar(() => _dio.get<Json>(caminho, queryParameters: _semVazios(parametros)));
+  Future<Json> get(String caminho, {Map<String, Object?> parametros = const {}}) async =>
+      await _executar(() => _dio.get<Json>(caminho, queryParameters: _semVazios(parametros))) ?? const {};
 
-  Future<List<Json>> getLista(String caminho) async {
-    try {
-      final resposta = await _dio.get<List<dynamic>>(caminho);
-      return (resposta.data ?? const []).cast<Json>();
-    } on DioException catch (erro) {
-      throw ErroApi.de(erro);
-    }
-  }
+  Future<List<Json>> getLista(String caminho) async =>
+      (await _executar(() => _dio.get<List<dynamic>>(caminho)) ?? const []).cast<Json>();
 
-  Future<Json> post(String caminho, {Object? corpo}) => _executar(() => _dio.post<Json>(caminho, data: corpo));
+  Future<Json> post(String caminho, {Object? corpo}) async =>
+      await _executar(() => _dio.post<Json>(caminho, data: corpo)) ?? const {};
 
-  Future<Json> put(String caminho, Json corpo) => _executar(() => _dio.put<Json>(caminho, data: corpo));
+  Future<Json> put(String caminho, Json corpo) async =>
+      await _executar(() => _dio.put<Json>(caminho, data: corpo)) ?? const {};
 
-  Future<Json> patch(String caminho, {Json? corpo}) => _executar(() => _dio.patch<Json>(caminho, data: corpo));
+  Future<Json> patch(String caminho, {Json? corpo}) async =>
+      await _executar(() => _dio.patch<Json>(caminho, data: corpo)) ?? const {};
 
-  Future<Json> _executar(Future<Response<Json>> Function() requisicao) async {
+  Future<T?> _executar<T>(Future<Response<T>> Function() requisicao) async {
     try {
       final resposta = await requisicao();
-      return resposta.data ?? const {};
+      return resposta.data;
     } on DioException catch (erro) {
       throw ErroApi.de(erro);
     }

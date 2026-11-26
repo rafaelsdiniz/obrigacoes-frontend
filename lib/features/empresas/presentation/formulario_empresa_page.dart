@@ -12,7 +12,7 @@ import '../../../core/widgets/campo_de_texto.dart';
 import '../../../core/widgets/campo_do_formulario.dart';
 import '../../../core/widgets/envio_de_formulario.dart';
 import '../../../core/widgets/estrutura_formulario.dart';
-import '../../../core/widgets/formulario_com_carregamento.dart';
+import '../../../core/widgets/registro_com_carregamento.dart';
 import '../../../core/widgets/secao_do_formulario.dart';
 import '../domain/empresa.dart';
 import 'empresas_providers.dart';
@@ -29,7 +29,7 @@ class FormularioEmpresaPage extends ConsumerWidget {
     if (id == null) {
       return const _FormularioEmpresa();
     }
-    return FormularioComCarregamento<Empresa>(
+    return RegistroComCarregamento<Empresa>(
       titulo: 'Editar empresa',
       registro: ref.watch(empresaProvider(id)),
       aoTentarNovamente: () => ref.invalidate(empresaProvider(id)),

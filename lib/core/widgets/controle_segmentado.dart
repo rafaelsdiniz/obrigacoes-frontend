@@ -12,22 +12,23 @@ class ControleSegmentado<T> extends StatelessWidget {
   final ValueChanged<T> aoSelecionar;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: const BoxDecoration(color: Cores.preenchimento, borderRadius: Raios.pequeno),
-    child: Padding(
-      padding: const EdgeInsets.all(3),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final opcao in opcoes)
-            Flexible(
-              child: _Segmento(
+  Widget build(BuildContext context) => SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: DecoratedBox(
+      decoration: const BoxDecoration(color: Cores.preenchimento, borderRadius: Raios.pequeno),
+      child: Padding(
+        padding: const EdgeInsets.all(3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final opcao in opcoes)
+              _Segmento(
                 rotulo: opcao.rotulo,
                 selecionado: opcao.valor == selecionado,
                 aoTocar: () => aoSelecionar(opcao.valor),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -74,7 +75,6 @@ class _Segmento extends StatelessWidget {
                   child: Text(
                     rotulo,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: estilo?.copyWith(
                       fontWeight: selecionado ? FontWeight.w600 : FontWeight.w500,
                       color: selecionado ? Cores.texto : Cores.textoSecundario,
