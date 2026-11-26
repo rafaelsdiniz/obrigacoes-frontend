@@ -10,7 +10,7 @@ import '../../../core/widgets/campo_de_texto.dart';
 import '../../../core/widgets/campo_do_formulario.dart';
 import '../../../core/widgets/envio_de_formulario.dart';
 import '../../../core/widgets/estrutura_formulario.dart';
-import '../../../core/widgets/formulario_com_carregamento.dart';
+import '../../../core/widgets/registro_com_carregamento.dart';
 import '../../../core/widgets/secao_do_formulario.dart';
 import '../domain/usuario.dart';
 import 'rotas_usuarios.dart';
@@ -27,7 +27,7 @@ class FormularioUsuarioPage extends ConsumerWidget {
     if (id == null) {
       return const _FormularioUsuario();
     }
-    return FormularioComCarregamento<Usuario>(
+    return RegistroComCarregamento<Usuario>(
       titulo: 'Editar usuário',
       registro: ref.watch(usuarioProvider(id)),
       aoTentarNovamente: () => ref.invalidate(usuarioProvider(id)),

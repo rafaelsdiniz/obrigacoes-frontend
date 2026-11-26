@@ -9,6 +9,8 @@ mixin EnvioDeFormulario<W extends StatefulWidget> on State<W> {
   bool salvando = false;
   Map<String, String> _errosDoServidor = const {};
 
+  String? erroDoServidor(String campo) => _errosDoServidor[campo];
+
   Validador validarCampo(String campo, [Validador? validacaoLocal]) =>
       (valor) => _errosDoServidor[campo] ?? validacaoLocal?.call(valor);
 

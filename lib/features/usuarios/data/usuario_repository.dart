@@ -21,6 +21,14 @@ class UsuarioRepository {
     Usuario.deJson,
   );
 
+  Future<Pagina<Usuario>> listarAtivos() async => Pagina.deJson(
+    await _api.get(
+      _recurso,
+      parametros: {'situacao': Situacao.ativo.valorApi, 'size': tamanhoMaximoDaPagina, 'sort': 'nome'},
+    ),
+    Usuario.deJson,
+  );
+
   Future<Usuario> buscar(int id) async => Usuario.deJson(await _api.get('$_recurso/$id'));
 
   Future<Usuario> cadastrar(DadosUsuario dados) async =>

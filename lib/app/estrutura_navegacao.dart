@@ -14,6 +14,8 @@ class EstruturaNavegacao extends StatelessWidget {
   static const _larguraDaBarraLateral = 264.0;
 
   static const List<_Destino> _destinos = [
+    (icone: Icones.painel, rotulo: 'Painel'),
+    (icone: Icones.obrigacoes, rotulo: 'Obrigações'),
     (icone: Icones.empresas, rotulo: 'Empresas'),
     (icone: Icones.usuarios, rotulo: 'Usuários'),
   ];

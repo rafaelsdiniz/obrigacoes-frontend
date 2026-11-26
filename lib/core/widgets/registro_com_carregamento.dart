@@ -9,8 +9,8 @@ import 'estado_carregando.dart';
 import 'estado_erro.dart';
 import 'icone.dart';
 
-class FormularioComCarregamento<T> extends StatelessWidget {
-  const FormularioComCarregamento({
+class RegistroComCarregamento<T> extends StatelessWidget {
+  const RegistroComCarregamento({
     required this.titulo,
     required this.registro,
     required this.aoTentarNovamente,
@@ -28,8 +28,8 @@ class FormularioComCarregamento<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => registro.when(
     data: builder,
-    loading: () => _Moldura(titulo: titulo, aoVoltar: aoVoltar, child: const EstadoCarregando()),
-    error: (erro, _) => _Moldura(
+    loading: () => MolduraDoRegistro(titulo: titulo, aoVoltar: aoVoltar, child: const EstadoCarregando()),
+    error: (erro, _) => MolduraDoRegistro(
       titulo: titulo,
       aoVoltar: aoVoltar,
       child: erro is ErroApi && erro.codigo == CodigoErro.recursoNaoEncontrado
@@ -44,8 +44,8 @@ class FormularioComCarregamento<T> extends StatelessWidget {
   );
 }
 
-class _Moldura extends StatelessWidget {
-  const _Moldura({required this.titulo, required this.aoVoltar, required this.child});
+class MolduraDoRegistro extends StatelessWidget {
+  const MolduraDoRegistro({required this.titulo, required this.aoVoltar, required this.child, super.key});
 
   final String titulo;
   final VoidCallback aoVoltar;
