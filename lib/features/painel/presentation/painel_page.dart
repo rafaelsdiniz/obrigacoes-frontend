@@ -26,6 +26,7 @@ class PainelPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tema = Theme.of(context).textTheme;
     return ConteudoCentralizado(
+      larguraMaxima: Medidas.larguraMaximaDaListagem,
       children: [
         if (!Medidas.telaLarga(context)) ...[const Marca(altura: 28), const SizedBox(height: 20)],
         const CabecalhoDePagina(titulo: 'Painel', subtitulo: 'Visão geral das obrigações do escritório'),
