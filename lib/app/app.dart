@@ -1,19 +1,22 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-class ObrigacoesApp extends StatelessWidget {
+import 'roteador.dart';
+import 'tema.dart';
+
+class ObrigacoesApp extends ConsumerWidget {
   const ObrigacoesApp({super.key});
 
+  static const portuguesDoBrasil = Locale('pt', 'BR');
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Obrigações',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F4E79)),
-      ),
-      home: const Scaffold(
-        body: Center(child: Text('Gerenciamento de Obrigações')),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
+    title: 'Obrigações',
+    debugShowCheckedModeBanner: false,
+    theme: Tema.claro(),
+    locale: portuguesDoBrasil,
+    supportedLocales: const [portuguesDoBrasil],
+    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+    routerConfig: ref.watch(roteadorProvider),
+  );
 }
