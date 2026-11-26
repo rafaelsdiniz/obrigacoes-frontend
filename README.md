@@ -10,7 +10,7 @@ Consome a API do repositório [obrigacoes-backend](https://github.com/rafaelsdin
 
 ## Tecnologias
 
-- Flutter 3.50 e Dart 3.14, com o pacote `material_ui` (Material Design 3)
+- Flutter 3.50 e Dart 3.14, com o pacote `material_ui` (Material Design 3) e URLs de caminho na web
 - Riverpod 3 para estado e injeção de dependências
 - go_router para rotas com URLs reais na web
 - Dio como cliente HTTP
@@ -33,13 +33,13 @@ flutter run -d chrome --dart-define=API_URL=http://192.168.0.10:8080
 
 ### Configuração em tempo de execução
 
-Na web, o aplicativo procura um arquivo `config.json` ao lado do `index.html` antes de iniciar:
+Na web, o aplicativo lê o arquivo `/config.json` da raiz do site antes de iniciar:
 
 ```json
 { "apiUrl": "https://api.exemplo.com.br" }
 ```
 
-Se o arquivo não existir, vale o `API_URL` definido no build. Assim, a mesma build serve qualquer ambiente.
+Se o arquivo não existir, vale o `API_URL` definido no build. Assim, a mesma build serve qualquer ambiente. Fora da web, sem `API_URL`, o padrão é `http://localhost:8080`, ou `http://10.0.2.2:8080` no emulador Android.
 
 ## Testes e qualidade
 
@@ -56,13 +56,14 @@ lib/
 ├── main.dart                 carrega a configuração e inicia o app
 ├── app/                      MaterialApp, tema, rotas e navegação responsiva
 ├── core/
-│   ├── config/               URL da API (config.json ou --dart-define)
-│   ├── dominio/              situação e filtro dos cadastros
+│   ├── config/               URL da API (/config.json ou --dart-define)
+│   ├── dominio/              Json, situação, filtro e termos dos cadastros
+│   ├── estado/               notifiers reaproveitáveis
 │   ├── formatacao/           CNPJ (máscara e validação) e validações de formulário
-│   ├── http/                 cliente da API, erros (Problem Details) e paginação
+│   ├── http/                 cliente da API, erros (Problem Details), página e parâmetros
 │   └── widgets/              estados de tela, lista paginada, filtros, formulários e avisos
 └── features/
-    ├── empresas/             data (repositório), domain (modelo) e presentation (telas e providers)
+    ├── empresas/             data (repositório), domain (modelo) e presentation (telas, estado e rotas)
     └── usuarios/
 ```
 
