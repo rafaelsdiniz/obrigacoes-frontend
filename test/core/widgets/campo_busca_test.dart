@@ -26,4 +26,32 @@ void main() {
     await tester.pump();
     expect(buscas, ['alfa', '']);
   });
+
+  testWidgets('mostra o valor quando o filtro muda por fora do campo', (tester) async {
+    final buscas = <String>[];
+    var valor = 'xyz';
+    late StateSetter alterar;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              alterar = setState;
+              return CampoBusca(dica: 'Buscar', valorInicial: valor, aoBuscar: buscas.add);
+            },
+          ),
+        ),
+      ),
+    );
+    expect(find.text('xyz'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'xyzw');
+    alterar(() => valor = '');
+    await tester.pump();
+    await tester.pump(CampoBusca.espera);
+
+    expect(find.text('xyzw'), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
+    expect(buscas, isEmpty);
+  });
 }
