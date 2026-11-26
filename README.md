@@ -32,7 +32,8 @@ Consome a API do repositório [obrigacoes-backend](https://github.com/rafaelsdin
 - Identidade visual da Player: cores da marca, tipografia Inter (licença OFL, empacotada no app) e layout responsivo de tela inteira
 - Riverpod 3 para estado e injeção de dependências
 - go_router para rotas com URLs reais na web
-- Dio como cliente HTTP
+- Dio como cliente HTTP, inclusive para envio de arquivos (multipart)
+- file_picker para escolher anexos e url_launcher para baixá-los
 - flutter_test e mocktail para testes
 
 ## Execução
@@ -80,12 +81,14 @@ lib/
 │   ├── config/               URL da API (/config.json ou --dart-define)
 │   ├── dominio/              Json, situação, filtro e termos dos cadastros
 │   ├── estado/               notifiers reaproveitáveis
-│   ├── formatacao/           CNPJ (máscara e validação) e validações de formulário
+│   ├── arquivos/             escolha de arquivos no dispositivo e download
+│   ├── formatacao/           CNPJ, datas, competência, tamanhos de arquivo e validações
 │   ├── http/                 cliente da API, erros (Problem Details), página e parâmetros
 │   └── widgets/              componentes da interface: cabeçalho, grupo, linhas, selos, filtros, formulários
 └── features/
     ├── painel/               indicadores e próximos vencimentos
     ├── obrigacoes/           lista, detalhe com andamento e histórico, formulário, regras de prazo
+    ├── anexos/               envio, lista, download e exclusão dos arquivos de uma obrigação
     ├── empresas/             data (repositório), domain (modelo) e presentation (telas, estado e rotas)
     └── usuarios/
 ```
@@ -94,5 +97,13 @@ Cada funcionalidade é dividida em três camadas:
 - `data`: fala com a API;
 - `domain`: modelos imutáveis;
 - `presentation`: telas e estado.
+
+### Anexos
+
+Na tela da obrigação, a seção **Anexos** envia um arquivo por vez, lista os enviados e permite baixar ou excluir.
+- O seletor só oferece as extensões aceitas pela API: PDF, PNG, JPEG, XML, CSV, XLSX e DOCX.
+- Arquivos acima de 10 MB são recusados antes do envio, para não carregar na memória algo que a API vai recusar. O valor fica em `Anexo.tamanhoMaximo` e acompanha o padrão do backend (`APP_ANEXOS_TAMANHO_MAXIMO`); a API continua sendo quem decide, conferindo o tipo pelo conteúdo e o tamanho.
+- O download abre o endereço do anexo em uma nova aba. A API responde com `Content-Disposition: attachment` e o nome original, então o navegador salva o arquivo e fecha a aba; se a API responder com erro, ele aparece na aba nova, sem perder o estado do app. No Android, o endereço abre no navegador.
+- Obrigação concluída continua aceitando anexos (por exemplo, o recibo da entrega), mas não permite excluí-los.
 
 Os erros da API chegam às telas como `ErroApi`, com o código estável e os erros por campo, que aparecem no próprio campo do formulário.

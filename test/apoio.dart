@@ -8,12 +8,16 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:obrigacoes_app/app/app.dart';
+import 'package:obrigacoes_app/core/arquivos/arquivos_do_dispositivo.dart';
 import 'package:obrigacoes_app/core/config/configuracao.dart';
 import 'package:obrigacoes_app/core/dominio/filtro_cadastro.dart';
 import 'package:obrigacoes_app/core/dominio/situacao.dart';
 import 'package:obrigacoes_app/core/formatacao/datas.dart';
 import 'package:obrigacoes_app/core/http/pagina.dart';
 import 'package:obrigacoes_app/core/tema/tema.dart';
+import 'package:obrigacoes_app/features/anexos/data/anexo_repository.dart';
+import 'package:obrigacoes_app/features/anexos/domain/anexo.dart';
+import 'package:obrigacoes_app/features/anexos/domain/tipo_de_anexo.dart';
 import 'package:obrigacoes_app/features/empresas/data/empresa_repository.dart';
 import 'package:obrigacoes_app/features/empresas/domain/empresa.dart';
 import 'package:obrigacoes_app/features/obrigacoes/data/obrigacao_repository.dart';
@@ -87,6 +91,13 @@ class UsuariosFalsos extends Mock implements UsuarioRepository {}
 
 class ObrigacoesFalsas extends Mock implements ObrigacaoRepository {}
 
+class AnexosFalsos extends Mock implements AnexoRepository {}
+
+class ArquivosFalsos extends Mock implements ArquivosDoDispositivo {}
+
+Anexo anexoDeExemplo({int id = 1, String nome = 'recibo-dctfweb.pdf', int tamanho = 184233}) =>
+    Anexo(id: id, nome: nome, tipo: TipoDeAnexo.pdf, tamanho: tamanho, enviadoEm: DateTime.utc(2026, 11, 20, 13));
+
 void registrarValoresPadrao() {
   registerFallbackValue(const FiltroCadastro());
   registerFallbackValue(const FiltroObrigacoes());
@@ -149,12 +160,20 @@ DadosObrigacao dadosDeObrigacaoDeExemplo() => DadosObrigacao(
   responsavelId: 1,
 );
 
-typedef RepositoriosFalsos = ({EmpresasFalsas empresas, UsuariosFalsos usuarios, ObrigacoesFalsas obrigacoes});
+typedef RepositoriosFalsos = ({
+  EmpresasFalsas empresas,
+  UsuariosFalsos usuarios,
+  ObrigacoesFalsas obrigacoes,
+  AnexosFalsos anexos,
+  ArquivosFalsos arquivos,
+});
 
 RepositoriosFalsos repositoriosComDados() {
   final empresas = EmpresasFalsas();
   final usuarios = UsuariosFalsos();
   final obrigacoes = ObrigacoesFalsas();
+  final anexos = AnexosFalsos();
+  final arquivos = ArquivosFalsos();
   final lista = [
     obrigacaoDeExemplo(),
     obrigacaoDeExemplo(id: 11, titulo: 'FGTS Digital', status: StatusObrigacao.emAndamento, diasParaVencer: -3),
@@ -176,7 +195,11 @@ RepositoriosFalsos repositoriosComDados() {
   when(() => obrigacoes.historico(any())).thenAnswer(
     (_) async => [TransicaoDeStatus(statusNovo: StatusObrigacao.pendente, alteradoEm: DateTime.utc(2026, 11, 20, 13))],
   );
-  return (empresas: empresas, usuarios: usuarios, obrigacoes: obrigacoes);
+  when(() => anexos.listar(any())).thenAnswer((_) async => [anexoDeExemplo()]);
+  when(() => anexos.enderecoDoArquivo(any(), any())).thenAnswer(
+    (invocacao) => Uri.parse('http://localhost:8080/api/v1/obrigacoes/10/anexos/${invocacao.positionalArguments.last}'),
+  );
+  return (empresas: empresas, usuarios: usuarios, obrigacoes: obrigacoes, anexos: anexos, arquivos: arquivos);
 }
 
 Future<ProviderContainer> abrirApp(
@@ -198,6 +221,8 @@ Future<ProviderContainer> abrirApp(
         empresaRepositoryProvider.overrideWithValue(falsos.empresas),
         usuarioRepositoryProvider.overrideWithValue(falsos.usuarios),
         obrigacaoRepositoryProvider.overrideWithValue(falsos.obrigacoes),
+        anexoRepositoryProvider.overrideWithValue(falsos.anexos),
+        arquivosDoDispositivoProvider.overrideWithValue(falsos.arquivos),
       ],
       retry: (tentativas, erro) => null,
       child: const ObrigacoesApp(),
