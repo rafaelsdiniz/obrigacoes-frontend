@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: 3.50.1
+  COBERTURA_MINIMA: 80
+
+jobs:
+  qualidade:
+    name: Análise, testes e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Verificar formatação
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Análise estática
+        run: flutter analyze
+
+      - name: Testes com cobertura
+        run: flutter test --coverage
+
+      - name: Cobertura mínima
+        run: |
+          awk -F: -v minimo="$COBERTURA_MINIMA" '/^LF:/ { total += $2 } /^LH:/ { cobertas += $2 }
+            END {
+              percentual = 100 * cobertas / total
+              printf "### Cobertura de linhas: %.1f%% (mínimo: %d%%)\n", percentual, minimo
+              exit percentual < minimo
+            }' coverage/lcov.info | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar cobertura
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cobertura
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+
+      - name: Build web
+        run: flutter build web --release
+
+  docker:
+    name: Imagem Docker
+    needs: qualidade
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Login no GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Metadados da imagem
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,format=short
+
+      - name: Build (e publicação na main)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          build-args: FLUTTER_VERSION=${{ env.FLUTTER_VERSION }}
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
