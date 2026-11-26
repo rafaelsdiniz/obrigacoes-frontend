@@ -1,13 +1,12 @@
 enum StatusObrigacao {
-  pendente('PENDENTE', 'Pendente', 'Iniciar'),
-  emAndamento('EM_ANDAMENTO', 'Em andamento', 'Concluir'),
-  concluida('CONCLUIDA', 'Concluída', null);
+  pendente('PENDENTE', 'Pendente'),
+  emAndamento('EM_ANDAMENTO', 'Em andamento'),
+  concluida('CONCLUIDA', 'Concluída');
 
-  const StatusObrigacao(this.valorApi, this.rotulo, this.acaoParaAvancar);
+  const StatusObrigacao(this.valorApi, this.rotulo);
 
   final String valorApi;
   final String rotulo;
-  final String? acaoParaAvancar;
 
   static StatusObrigacao daApi(Object? valor) => values.firstWhere(
     (status) => status.valorApi == valor,

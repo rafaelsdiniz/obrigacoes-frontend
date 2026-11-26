@@ -13,8 +13,12 @@ void main() {
 
   testWidgets('mostra os totais e abre a lista filtrada ao tocar em um indicador', (tester) async {
     final falsos = repositoriosComDados();
-    when(() => falsos.obrigacoes.resumir())
-        .thenAnswer((_) async => const ResumoObrigacoes(pendentes: 4, emAndamento: 2, concluidas: 9, atrasadas: 3));
+    when(
+      () => falsos.obrigacoes.resumir(
+        empresaId: any(named: 'empresaId'),
+        responsavelId: any(named: 'responsavelId'),
+      ),
+    ).thenAnswer((_) async => const ResumoObrigacoes(pendentes: 4, emAndamento: 2, concluidas: 9, atrasadas: 3));
     await abrirApp(tester, tamanho: const Size(1280, 900), repositorios: falsos);
 
     expect(find.bySemanticsLabel('Pendentes: 4. Ver obrigações'), findsOneWidget);

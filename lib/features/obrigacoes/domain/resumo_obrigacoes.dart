@@ -19,6 +19,4 @@ class ResumoObrigacoes {
   final int emAndamento;
   final int concluidas;
   final int atrasadas;
-
-  int get emAberto => pendentes + emAndamento;
 }

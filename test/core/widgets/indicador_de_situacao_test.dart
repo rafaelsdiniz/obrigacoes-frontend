@@ -21,7 +21,7 @@ void main() {
   }
 
   testWidgets('usa verde para ativa e cinza para inativa, sempre com texto', (tester) async {
-    expect((await rotulo(tester, Situacao.ativo, 'Ativa')).style?.color, Cores.sucesso);
-    expect((await rotulo(tester, Situacao.inativo, 'Inativa')).style?.color, Cores.textoSecundario);
+    expect((await rotulo(tester, Situacao.ativo, 'Ativa')).style?.color, Paleta.claro.sobreForte);
+    expect((await rotulo(tester, Situacao.inativo, 'Inativa')).style?.color, Paleta.claro.sobreForte);
   });
 }

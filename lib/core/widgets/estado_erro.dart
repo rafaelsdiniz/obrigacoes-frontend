@@ -17,7 +17,7 @@ class EstadoErro extends StatelessWidget {
     mensagem: ErroApi.mensagemPara(erro),
     acao: FilledButton.icon(
       onPressed: aoTentarNovamente,
-      icon: const Icone(Icones.recarregar, tamanho: 18),
+      icon: const Icone(Icones.recarregar, tamanho: TamanhosDeIcone.padrao),
       label: const Text('Tentar novamente'),
     ),
   );

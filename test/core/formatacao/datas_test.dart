@@ -12,6 +12,13 @@ void main() {
     expect(Datas.diasEntre(DateTime(2026, 11, 5), DateTime(2026, 12, 5)), 30);
   });
 
+  test('formata instantes da API no horário local, por extenso e na forma curta', () {
+    final instante = DateTime(2026, 11, 26, 8, 41).toUtc();
+
+    expect(Datas.formatarComHora(instante), '26/11/2026 às 08:41');
+    expect(Datas.formatarCurtoComHora(instante), '26/11 · 08:41');
+  });
+
   test('a competência aceita apenas MM/AAAA válido', () {
     expect(Competencia.deTexto('10/2026'), const Competencia(2026, 10));
     expect(Competencia.deTexto('13/2026'), isNull);

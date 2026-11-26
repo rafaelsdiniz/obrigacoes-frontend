@@ -1,22 +1,27 @@
-import '../../../core/widgets/icone.dart';
-
 enum TipoDeAnexo {
-  pdf('PDF', Icones.arquivoPdf, ['pdf']),
-  png('PNG', Icones.arquivoImagem, ['png']),
-  jpeg('JPEG', Icones.arquivoImagem, ['jpg', 'jpeg']),
-  xml('XML', Icones.arquivoXml, ['xml']),
-  csv('CSV', Icones.arquivoPlanilha, ['csv']),
-  xlsx('XLSX', Icones.arquivoPlanilha, ['xlsx']),
-  docx('DOCX', Icones.arquivoTexto, ['docx']),
-  outro('Arquivo', Icones.arquivo, []);
+  pdf('PDF', ['pdf']),
+  png('PNG', ['png']),
+  jpeg('JPEG', ['jpg', 'jpeg']),
+  xml('XML', ['xml']),
+  csv('CSV', ['csv']),
+  xlsx('XLSX', ['xlsx']),
+  docx('DOCX', ['docx']),
+  outro('Arquivo', []);
 
-  const TipoDeAnexo(this.rotulo, this.icone, this.extensoes);
+  const TipoDeAnexo(this.rotulo, this.extensoes);
 
   final String rotulo;
-  final Icones icone;
   final List<String> extensoes;
 
   static List<String> get extensoesPermitidas => [for (final tipo in values) ...tipo.extensoes];
+
+  static String get descricaoDosAceitos {
+    final aceitos = [
+      for (final tipo in values)
+        if (tipo != outro) tipo.rotulo,
+    ];
+    return '${aceitos.sublist(0, aceitos.length - 1).join(', ')} ou ${aceitos.last}';
+  }
 
   static TipoDeAnexo daApi(Object? valor) => values.firstWhere((tipo) => tipo.rotulo == valor, orElse: () => outro);
 }

@@ -15,6 +15,11 @@ abstract final class Datas {
     return '${formatar(local)} às ${_doisDigitos(local.hour)}:${_doisDigitos(local.minute)}';
   }
 
+  static String formatarCurtoComHora(DateTime instante) {
+    final local = instante.toLocal();
+    return '${_doisDigitos(local.day)}/${_doisDigitos(local.month)} · ${_doisDigitos(local.hour)}:${_doisDigitos(local.minute)}';
+  }
+
   static DateTime hoje() {
     final agora = DateTime.now();
     return DateTime(agora.year, agora.month, agora.day);

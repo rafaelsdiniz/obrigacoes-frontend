@@ -21,10 +21,12 @@ class AvisoDeEstado extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             DecoratedBox(
-              decoration: const BoxDecoration(color: Cores.fundo, shape: BoxShape.circle),
+              decoration: BoxDecoration(color: context.cores.fundo, shape: BoxShape.circle),
               child: SizedBox.square(
                 dimension: 72,
-                child: Center(child: Icone(icone, tamanho: 30, cor: Cores.textoSecundario)),
+                child: Center(
+                  child: Icone(icone, tamanho: TamanhosDeIcone.ilustracao, cor: context.cores.textoVariante),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -34,7 +36,7 @@ class AvisoDeEstado extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 420),
               child: Text(
                 mensagem,
-                style: tema.bodyMedium?.copyWith(color: Cores.textoSecundario),
+                style: tema.bodyMedium?.copyWith(color: context.cores.textoVariante),
                 textAlign: TextAlign.center,
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 class ServidorDePaginas implements HttpClientAdapter {
   late RequestOptions ultimaRequisicao;
+  Object respostaPadrao = {'conteudo': <Object>[], 'pagina': 0, 'tamanho': 20, 'totalElementos': 0, 'totalPaginas': 0};
 
   @override
   Future<ResponseBody> fetch(
@@ -14,7 +15,7 @@ class ServidorDePaginas implements HttpClientAdapter {
   ) async {
     ultimaRequisicao = options;
     return ResponseBody.fromString(
-      jsonEncode({'conteudo': <Object>[], 'pagina': 0, 'tamanho': 20, 'totalElementos': 0, 'totalPaginas': 0}),
+      jsonEncode(respostaPadrao),
       200,
       headers: {
         Headers.contentTypeHeader: [Headers.jsonContentType],

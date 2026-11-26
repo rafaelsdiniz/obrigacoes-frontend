@@ -19,7 +19,6 @@ enum Icones {
   excluir('excluir'),
   recarregar('recarregar'),
   calendario('calendario'),
-  filtrar('filtrar'),
   situacaoAtiva('situacao-ativa'),
   situacaoInativa('situacao-inativa'),
   statusPendente('status-pendente'),
@@ -35,7 +34,14 @@ enum Icones {
   vazio('vazio'),
   semConexao('sem-conexao'),
   naoEncontrado('nao-encontrado'),
-  historico('historico');
+  historico('historico'),
+  enviarArquivo('enviar-arquivo'),
+  expandir('expandir'),
+  ordenar('ordenar'),
+  etiqueta('etiqueta'),
+  marcado('marcado'),
+  sol('sol'),
+  lua('lua');
 
   const Icones(this._arquivo);
 
@@ -44,8 +50,15 @@ enum Icones {
   String get caminho => 'assets/icones/$_arquivo.svg';
 }
 
+abstract final class TamanhosDeIcone {
+  static const pequeno = 14.0;
+  static const padrao = 18.0;
+  static const grande = 20.0;
+  static const ilustracao = 32.0;
+}
+
 class Icone extends StatelessWidget {
-  const Icone(this.icone, {this.tamanho = 20, this.cor, this.rotulo, super.key});
+  const Icone(this.icone, {this.tamanho = TamanhosDeIcone.grande, this.cor, this.rotulo, super.key});
 
   final Icones icone;
   final double tamanho;

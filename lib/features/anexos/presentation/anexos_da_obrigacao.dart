@@ -6,14 +6,17 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/arquivos/arquivos_do_dispositivo.dart';
 import '../../../core/formatacao/datas.dart';
 import '../../../core/formatacao/tamanhos.dart';
-import '../../../core/http/erro_api.dart';
 import '../../../core/tema/tema.dart';
 import '../../../core/widgets/avisos.dart';
+import '../../../core/widgets/cabecalho_do_cartao.dart';
+import '../../../core/widgets/erro_em_linha.dart';
 import '../../../core/widgets/grupo.dart';
 import '../../../core/widgets/icone.dart';
+import '../../../core/widgets/progresso_no_botao.dart';
 import '../domain/anexo.dart';
 import '../domain/tipo_de_anexo.dart';
 import 'anexos_providers.dart';
+import 'area_de_envio.dart';
 
 class AnexosDaObrigacao extends ConsumerStatefulWidget {
   const AnexosDaObrigacao({required this.obrigacaoId, required this.permiteExcluir, super.key});
@@ -33,8 +36,10 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
 
   GestaoDeAnexos get _gestao => ref.read(gestaoDeAnexosProvider);
 
-  Future<void> _anexar() async {
-    if (_escolhendo || _enviando != null) {
+  bool get _ocupado => _escolhendo || _enviando != null;
+
+  Future<void> _escolher() async {
+    if (_ocupado) {
       return;
     }
     setState(() => _escolhendo = true);
@@ -42,16 +47,8 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
       final arquivo = await ref
           .read(arquivosDoDispositivoProvider)
           .escolher(extensoes: TipoDeAnexo.extensoesPermitidas);
-      if (arquivo == null || !mounted) {
-        return;
-      }
-      setState(() {
-        _escolhendo = false;
-        _enviando = arquivo.nome;
-      });
-      await _gestao.enviar(widget.obrigacaoId, arquivo);
-      if (mounted) {
-        avisarSucesso(context, 'Arquivo anexado.');
+      if (arquivo != null && mounted) {
+        await _enviar([arquivo]);
       }
     } catch (erro, pilha) {
       if (mounted) {
@@ -59,10 +56,37 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _escolhendo = false;
-          _enviando = null;
-        });
+        setState(() => _escolhendo = false);
+      }
+    }
+  }
+
+  Future<void> _enviar(List<ArquivoEscolhido> arquivos) async {
+    if (_enviando != null || arquivos.isEmpty) {
+      return;
+    }
+    var enviados = 0;
+    try {
+      for (final arquivo in arquivos) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => _enviando = arquivo.nome);
+        try {
+          await _gestao.enviar(widget.obrigacaoId, arquivo);
+          enviados++;
+        } catch (erro, pilha) {
+          if (mounted) {
+            avisarFalha(context, erro, pilha);
+          }
+        }
+      }
+      if (mounted && enviados > 0) {
+        avisarSucesso(context, enviados == 1 ? 'Arquivo anexado.' : '$enviados arquivos anexados.');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _enviando = null);
       }
     }
   }
@@ -83,20 +107,20 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
   }
 
   Future<void> _excluir(Anexo anexo) async {
-    if (!_excluindo.add(anexo.id)) {
+    if (_excluindo.contains(anexo.id)) {
       return;
     }
+    final confirmado = await confirmar(
+      context,
+      titulo: 'Excluir anexo?',
+      mensagem: '"${anexo.nome}" será removido desta obrigação.',
+      acao: 'Excluir',
+    );
+    if (!confirmado || !mounted || _excluindo.contains(anexo.id)) {
+      return;
+    }
+    setState(() => _excluindo.add(anexo.id));
     try {
-      final confirmado = await confirmar(
-        context,
-        titulo: 'Excluir anexo?',
-        mensagem: '"${anexo.nome}" será removido desta obrigação.',
-        acao: 'Excluir',
-      );
-      if (!confirmado || !mounted) {
-        return;
-      }
-      setState(() {});
       await _gestao.excluir(widget.obrigacaoId, anexo);
       if (mounted) {
         avisarSucesso(context, 'Anexo excluído.');
@@ -106,9 +130,8 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
         avisarFalha(context, erro, pilha);
       }
     } finally {
-      _excluindo.remove(anexo.id);
       if (mounted) {
-        setState(() {});
+        setState(() => _excluindo.remove(anexo.id));
       }
     }
   }
@@ -117,61 +140,64 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
   Widget build(BuildContext context) {
     final tema = Theme.of(context).textTheme;
     final anexos = ref.watch(anexosDaObrigacaoProvider(widget.obrigacaoId));
-    final enviando = _enviando;
+    final quantidade = anexos.value?.length;
     return Grupo(
-      preenchimento: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 12,
-            runSpacing: 8,
-            children: [
-              Semantics(header: true, child: Text('Anexos', style: tema.titleMedium)),
-              TextButton.icon(
-                onPressed: enviando == null && !_escolhendo ? () => unawaited(_anexar()) : null,
-                icon: const Icone(Icones.anexar, tamanho: 18),
-                label: const Text('Anexar arquivo'),
-              ),
-            ],
+          CabecalhoDoCartao(
+            titulo: 'Anexos',
+            detalhe: switch (quantidade) {
+              null || 0 => null,
+              1 => '1 arquivo',
+              _ => '$quantidade arquivos',
+            },
+            acao: OutlinedButton.icon(
+              onPressed: _ocupado ? null : () => unawaited(_escolher()),
+              icon: const Icone(Icones.anexar, tamanho: TamanhosDeIcone.padrao),
+              label: const Text('Anexar arquivo'),
+            ),
           ),
-          Text(
-            'PDF, imagens, XML, CSV, planilhas e documentos de até ${Tamanhos.formatar(Anexo.tamanhoMaximo)}.',
-            style: tema.bodySmall,
-          ),
-          const SizedBox(height: 16),
-          if (enviando != null) _Envio(nome: enviando),
-          anexos.when(
-            loading: () => const LinearProgressIndicator(semanticsLabel: 'Carregando anexos'),
-            error: (erro, _) => Row(
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: Semantics(liveRegion: true, child: Text(ErroApi.mensagemPara(erro), style: tema.bodySmall)),
+                AreaDeEnvio(
+                  enviando: _enviando,
+                  habilitada: !_ocupado,
+                  aoEscolher: () => unawaited(_escolher()),
+                  aoSoltar: (arquivos) => unawaited(_enviar(arquivos)),
                 ),
-                TextButton(
-                  onPressed: () => ref.invalidate(anexosDaObrigacaoProvider(widget.obrigacaoId)),
-                  child: const Text('Tentar novamente'),
+                const SizedBox(height: 12),
+                anexos.when(
+                  loading: () => const LinearProgressIndicator(semanticsLabel: 'Carregando anexos'),
+                  error: (erro, _) => ErroEmLinha(
+                    erro: erro,
+                    aoTentarNovamente: () => ref.invalidate(anexosDaObrigacaoProvider(widget.obrigacaoId)),
+                  ),
+                  data: (lista) => lista.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text('Nenhum arquivo anexado.', textAlign: TextAlign.center, style: tema.bodySmall),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            for (final (indice, anexo) in lista.indexed) ...[
+                              if (indice > 0) const Divider(),
+                              _ItemDoAnexo(
+                                anexo: anexo,
+                                excluindo: _excluindo.contains(anexo.id),
+                                aoBaixar: () => unawaited(_baixar(anexo)),
+                                aoExcluir: widget.permiteExcluir ? () => unawaited(_excluir(anexo)) : null,
+                              ),
+                            ],
+                          ],
+                        ),
                 ),
               ],
             ),
-            data: (lista) => lista.isEmpty && enviando == null
-                ? Text('Nenhum arquivo anexado.', style: tema.bodyMedium?.copyWith(color: Cores.textoSecundario))
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final (indice, anexo) in lista.indexed) ...[
-                        if (indice > 0) const Divider(),
-                        _ItemDoAnexo(
-                          anexo: anexo,
-                          excluindo: _excluindo.contains(anexo.id),
-                          aoBaixar: () => unawaited(_baixar(anexo)),
-                          aoExcluir: widget.permiteExcluir ? () => unawaited(_excluir(anexo)) : null,
-                        ),
-                      ],
-                    ],
-                  ),
           ),
         ],
       ),
@@ -179,26 +205,15 @@ class _AnexosDaObrigacaoState extends ConsumerState<AnexosDaObrigacao> {
   }
 }
 
-class _Envio extends StatelessWidget {
-  const _Envio({required this.nome});
-
-  final String nome;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 16),
-    child: Semantics(
-      liveRegion: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('Enviando $nome…', style: Theme.of(context).textTheme.bodySmall, overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 6),
-          const LinearProgressIndicator(),
-        ],
-      ),
-    ),
-  );
+extension on TipoDeAnexo {
+  Icones get icone => switch (this) {
+    TipoDeAnexo.pdf => Icones.arquivoPdf,
+    TipoDeAnexo.png || TipoDeAnexo.jpeg => Icones.arquivoImagem,
+    TipoDeAnexo.xml => Icones.arquivoXml,
+    TipoDeAnexo.csv || TipoDeAnexo.xlsx => Icones.arquivoPlanilha,
+    TipoDeAnexo.docx => Icones.arquivoTexto,
+    TipoDeAnexo.outro => Icones.arquivo,
+  };
 }
 
 class _ItemDoAnexo extends StatelessWidget {
@@ -218,10 +233,12 @@ class _ItemDoAnexo extends StatelessWidget {
       child: Row(
         children: [
           DecoratedBox(
-            decoration: const BoxDecoration(color: Cores.preenchimento, borderRadius: Raios.pequeno),
+            decoration: BoxDecoration(color: context.cores.superficie, borderRadius: Raios.controle),
             child: SizedBox.square(
               dimension: 40,
-              child: Center(child: Icone(anexo.tipo.icone, tamanho: 20, cor: Cores.grafite)),
+              child: Center(
+                child: Icone(anexo.tipo.icone, tamanho: TamanhosDeIcone.grande, cor: context.cores.primaria),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -249,18 +266,15 @@ class _ItemDoAnexo extends StatelessWidget {
           IconButton(
             tooltip: 'Baixar ${anexo.nome}',
             onPressed: aoBaixar,
-            icon: const Icone(Icones.baixar, tamanho: 20),
+            icon: const Icone(Icones.baixar, tamanho: TamanhosDeIcone.grande),
           ),
           if (aoExcluir != null)
             IconButton(
               tooltip: 'Excluir ${anexo.nome}',
               onPressed: excluindo ? null : aoExcluir,
               icon: excluindo
-                  ? const SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, semanticsLabel: 'Excluindo'),
-                    )
-                  : const Icone(Icones.excluir, tamanho: 20),
+                  ? const ProgressoNoBotao(rotulo: 'Excluindo')
+                  : const Icone(Icones.excluir, tamanho: TamanhosDeIcone.grande),
             ),
         ],
       ),

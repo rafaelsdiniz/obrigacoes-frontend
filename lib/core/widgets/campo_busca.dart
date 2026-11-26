@@ -56,13 +56,9 @@ class _CampoBuscaState extends State<CampoBusca> {
     textInputAction: TextInputAction.search,
     decoration: InputDecoration(
       hintText: widget.dica,
-      isDense: true,
-      fillColor: Cores.preenchimento,
-      enabledBorder: const OutlineInputBorder(borderRadius: Raios.pequeno, borderSide: BorderSide.none),
-      contentPadding: const EdgeInsets.symmetric(vertical: 12),
-      prefixIcon: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: Icone(Icones.buscar, tamanho: 19, cor: Cores.textoSecundario),
+      prefixIcon: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Icone(Icones.buscar, tamanho: TamanhosDeIcone.padrao, cor: context.cores.textoVariante),
       ),
       prefixIconConstraints: const BoxConstraints(minWidth: 44),
       suffixIcon: ListenableBuilder(
@@ -72,7 +68,7 @@ class _CampoBuscaState extends State<CampoBusca> {
             : IconButton(
                 tooltip: 'Limpar busca',
                 onPressed: _limpar,
-                icon: const Icone(Icones.limpar, tamanho: 18, cor: Cores.textoSecundario),
+                icon: Icone(Icones.limpar, tamanho: TamanhosDeIcone.padrao, cor: context.cores.textoVariante),
               ),
       ),
     ),

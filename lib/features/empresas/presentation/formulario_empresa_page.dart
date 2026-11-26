@@ -33,7 +33,7 @@ class FormularioEmpresaPage extends ConsumerWidget {
       titulo: 'Editar empresa',
       registro: ref.watch(empresaProvider(id)),
       aoTentarNovamente: () => ref.invalidate(empresaProvider(id)),
-      aoVoltar: () => context.go(RotasEmpresas.lista),
+      retorno: (rotulo: 'Empresas', aoVoltar: () => context.go(RotasEmpresas.lista)),
       builder: (empresa) => _FormularioEmpresa(key: ValueKey(empresa.versao), empresa: empresa),
     );
   }
@@ -89,7 +89,7 @@ class _FormularioEmpresaState extends ConsumerState<_FormularioEmpresa> with Env
     subtitulo: widget.empresa == null
         ? 'Cadastre uma empresa cliente do escritório'
         : 'Atualize os dados cadastrais da empresa',
-    aoVoltar: () => context.go(RotasEmpresas.lista),
+    retorno: (rotulo: 'Empresas', aoVoltar: () => context.go(RotasEmpresas.lista)),
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,

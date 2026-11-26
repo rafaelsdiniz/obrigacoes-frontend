@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../core/dominio/termos_do_cadastro.dart';
 import '../../../core/formatacao/cnpj.dart';
 import '../../../core/widgets/alteracao_de_situacao.dart';
 import '../../../core/widgets/cabecalho_de_colunas.dart';
@@ -18,8 +17,6 @@ import '../domain/empresa.dart';
 import 'empresas_providers.dart';
 import 'rotas_empresas.dart';
 
-const _termos = TermosDoCadastro(substantivo: 'Empresa', genero: Genero.feminino);
-
 class ListaEmpresasPage extends ConsumerWidget {
   const ListaEmpresasPage({super.key});
 
@@ -33,7 +30,7 @@ class ListaEmpresasPage extends ConsumerWidget {
       aoCriarNovo: () => context.go(RotasEmpresas.nova),
       filtros: FiltrosDeCadastro(
         dica: 'Buscar por razão social, nome fantasia ou CNPJ',
-        termos: _termos,
+        termos: termosDaEmpresa,
         filtro: ref.watch(filtroEmpresasProvider),
         aoBuscar: filtro.buscar,
         aoFiltrarPorSituacao: filtro.filtrarPorSituacao,
@@ -69,7 +66,7 @@ class _LinhaEmpresa extends ConsumerWidget {
     return LinhaDeCadastro(
       titulo: empresa.razaoSocial,
       detalhes: [Cnpj.formatar(empresa.cnpj), empresa.nomeFantasia ?? '', empresa.email ?? ''],
-      situacao: IndicadorDeSituacao(situacao: empresa.situacao, termos: _termos),
+      situacao: IndicadorDeSituacao(situacao: empresa.situacao, termos: termosDaEmpresa),
       aoTocar: () => context.go(RotasEmpresas.edicao(empresa.id)),
       menu: MenuDeCadastro(
         nome: empresa.razaoSocial,
@@ -79,7 +76,7 @@ class _LinhaEmpresa extends ConsumerWidget {
           context,
           nome: empresa.razaoSocial,
           atual: empresa.situacao,
-          termos: _termos,
+          termos: termosDaEmpresa,
           consequenciaDaInativacao:
               'A empresa continuará disponível para consulta, mas não poderá receber novas obrigações.',
           alterar: (nova) => cadastro.alterarSituacao(empresa, nova),

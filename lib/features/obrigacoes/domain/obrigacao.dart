@@ -18,6 +18,8 @@ class Obrigacao {
     this.descricao,
     this.competencia,
     this.proximoStatus,
+    this.criadoEm,
+    this.atualizadoEm,
   });
 
   factory Obrigacao.deJson(Json json) => Obrigacao(
@@ -36,6 +38,8 @@ class Obrigacao {
     empresa: EmpresaDaObrigacao.deJson(json['empresa'] as Json),
     responsavel: ResponsavelDaObrigacao.deJson(json['responsavel'] as Json),
     versao: json['versao'] as int,
+    criadoEm: _instante(json['criadoEm']),
+    atualizadoEm: _instante(json['atualizadoEm']),
   );
 
   final int id;
@@ -50,8 +54,12 @@ class Obrigacao {
   final EmpresaDaObrigacao empresa;
   final ResponsavelDaObrigacao responsavel;
   final int versao;
+  final DateTime? criadoEm;
+  final DateTime? atualizadoEm;
 
   bool get concluida => status == StatusObrigacao.concluida;
+
+  static DateTime? _instante(Object? valor) => valor is String ? DateTime.parse(valor) : null;
 }
 
 class EmpresaDaObrigacao {

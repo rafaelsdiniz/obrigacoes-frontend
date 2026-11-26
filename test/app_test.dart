@@ -32,15 +32,19 @@ void main() {
   });
 
   testWidgets('tocar na seção atual volta para a lista', (tester) async {
+    final itemEmpresasDaBarraLateral = find.descendant(
+      of: find.byWidgetPredicate((widget) => widget is Semantics && widget.properties.label == 'Navegação principal'),
+      matching: find.widgetWithText(InkWell, 'Empresas'),
+    );
     await abrirApp(tester, tamanho: const Size(1280, 800));
-    await tester.tap(find.widgetWithText(InkWell, 'Empresas'));
+    await tester.tap(itemEmpresasDaBarraLateral);
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Nova empresa'));
     await tester.pumpAndSettle();
     expect(find.text('Identificação'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(InkWell, 'Empresas'));
+    await tester.tap(itemEmpresasDaBarraLateral);
     await tester.pumpAndSettle();
     expect(find.text('Identificação'), findsNothing);
   });

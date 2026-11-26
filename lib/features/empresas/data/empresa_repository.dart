@@ -29,6 +29,11 @@ class EmpresaRepository {
     Empresa.deJson,
   );
 
+  Future<Pagina<Empresa>> listarTodas() async => Pagina.deJson(
+    await _api.get(_recurso, parametros: {'size': tamanhoMaximoDaPagina, 'sort': 'razaoSocial'}),
+    Empresa.deJson,
+  );
+
   Future<Empresa> buscar(int id) async => Empresa.deJson(await _api.get('$_recurso/$id'));
 
   Future<Empresa> cadastrar(DadosEmpresa dados) async =>
