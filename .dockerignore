@@ -1,0 +1,13 @@
+.git/
+.github/
+.dart_tool/
+.idea/
+.vscode/
+build/
+coverage/
+android/
+docs/
+test/
+*.md
+Dockerfile
+.dockerignore
