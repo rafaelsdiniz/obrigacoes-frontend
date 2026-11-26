@@ -73,34 +73,43 @@ class _FormularioUsuarioState extends ConsumerState<_FormularioUsuario> with Env
   @override
   Widget build(BuildContext context) => EstruturaFormulario(
     titulo: widget.usuario == null ? 'Novo usuário' : 'Editar usuário',
+    subtitulo: widget.usuario == null ? 'Cadastre um colaborador do escritório' : 'Atualize os dados do colaborador',
+    aoVoltar: () => context.go(RotasUsuarios.lista),
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,
     campos: [
-      TextFormField(
-        controller: _nome,
-        decoration: const InputDecoration(labelText: 'Nome *'),
-        validator: validarCampo('nome', Validacoes.obrigatorio('O nome é obrigatório.', maximo: 120)),
-        onChanged: (_) => campoAlterado('nome'),
-        textInputAction: TextInputAction.next,
-      ),
-      TextFormField(
-        controller: _email,
-        decoration: const InputDecoration(labelText: 'E-mail *'),
-        keyboardType: TextInputType.emailAddress,
-        validator: validarCampo(
-          'email',
-          Validacoes.todas([Validacoes.obrigatorio('O e-mail é obrigatório.', maximo: 150), Validacoes.email]),
+      CampoDoFormulario(
+        TextFormField(
+          controller: _nome,
+          decoration: const InputDecoration(labelText: 'Nome *'),
+          validator: validarCampo('nome', Validacoes.obrigatorio('O nome é obrigatório.', maximo: 120)),
+          onChanged: (_) => campoAlterado('nome'),
+          textInputAction: TextInputAction.next,
         ),
-        onChanged: (_) => campoAlterado('email'),
-        textInputAction: TextInputAction.next,
+        larguraInteira: true,
       ),
-      TextFormField(
-        controller: _cargo,
-        decoration: const InputDecoration(labelText: 'Cargo'),
-        validator: validarCampo('cargo', Validacoes.tamanhoMaximo(80)),
-        onChanged: (_) => campoAlterado('cargo'),
-        onFieldSubmitted: (_) => unawaited(_salvar()),
+      CampoDoFormulario(
+        TextFormField(
+          controller: _email,
+          decoration: const InputDecoration(labelText: 'E-mail *'),
+          keyboardType: TextInputType.emailAddress,
+          validator: validarCampo(
+            'email',
+            Validacoes.todas([Validacoes.obrigatorio('O e-mail é obrigatório.', maximo: 150), Validacoes.email]),
+          ),
+          onChanged: (_) => campoAlterado('email'),
+          textInputAction: TextInputAction.next,
+        ),
+      ),
+      CampoDoFormulario(
+        TextFormField(
+          controller: _cargo,
+          decoration: const InputDecoration(labelText: 'Cargo'),
+          validator: validarCampo('cargo', Validacoes.tamanhoMaximo(80)),
+          onChanged: (_) => campoAlterado('cargo'),
+          onFieldSubmitted: (_) => unawaited(_salvar()),
+        ),
       ),
     ],
   );

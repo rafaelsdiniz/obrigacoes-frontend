@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:obrigacoes_app/core/dominio/situacao.dart';
 import 'package:obrigacoes_app/core/http/pagina.dart';
+import 'package:obrigacoes_app/core/tema/tema.dart';
 import 'package:obrigacoes_app/features/empresas/domain/empresa.dart';
 import 'package:obrigacoes_app/features/usuarios/domain/usuario.dart';
 
@@ -44,8 +48,21 @@ Future<void> abrirTela(
     ProviderScope(
       overrides: overrides,
       retry: (tentativas, erro) => null,
-      child: MaterialApp.router(routerConfig: roteador),
+      child: MaterialApp.router(theme: Tema.claro(), routerConfig: roteador),
     ),
   );
   await tester.pumpAndSettle();
+}
+
+Future<void> carregarFontesDoApp() async {
+  Future<void> carregar(String familia, List<String> arquivos) async {
+    final carregador = FontLoader(familia);
+    for (final arquivo in arquivos) {
+      carregador.addFont(Future.value(ByteData.sublistView(File('assets/fontes/inter/$arquivo').readAsBytesSync())));
+    }
+    await carregador.load();
+  }
+
+  await carregar('Inter', ['Inter-Regular.ttf', 'Inter-Medium.ttf', 'Inter-SemiBold.ttf', 'Inter-Bold.ttf']);
+  await carregar('InterDisplay', ['InterDisplay-Bold.ttf']);
 }

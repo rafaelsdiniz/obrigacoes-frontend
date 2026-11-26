@@ -23,3 +23,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/imagens/
+    - assets/fontes/inter/LICENSE.txt
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fontes/inter/Inter-Regular.ttf
+        - asset: assets/fontes/inter/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fontes/inter/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fontes/inter/Inter-Bold.ttf
+          weight: 700
+    - family: InterDisplay
+      fonts:
+        - asset: assets/fontes/inter/InterDisplay-Bold.ttf
+          weight: 700

@@ -1,15 +1,20 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/layout/medidas.dart';
+import '../core/tema/tema.dart';
+import '../core/widgets/marca.dart';
+
+typedef _Destino = ({IconData icone, IconData iconeSelecionado, String rotulo});
+
 class EstruturaNavegacao extends StatelessWidget {
   const EstruturaNavegacao({required this.navegacao, super.key});
 
-  static const larguraParaMenuLateral = 840.0;
-  static const larguraParaMenuExpandido = 1200.0;
+  static const _larguraDaBarraLateral = 264.0;
 
-  static const _destinos = [
-    (icone: Icons.business_outlined, iconeSelecionado: Icons.business, rotulo: 'Empresas'),
-    (icone: Icons.people_outline, iconeSelecionado: Icons.people, rotulo: 'Usuários'),
+  static const List<_Destino> _destinos = [
+    (icone: Icons.apartment_outlined, iconeSelecionado: Icons.apartment_rounded, rotulo: 'Empresas'),
+    (icone: Icons.group_outlined, iconeSelecionado: Icons.group_rounded, rotulo: 'Usuários'),
   ];
 
   final StatefulNavigationShell navegacao;
@@ -18,71 +23,144 @@ class EstruturaNavegacao extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final largura = MediaQuery.sizeOf(context).width;
-    if (largura < larguraParaMenuLateral) {
+    if (!Medidas.telaLarga(context)) {
       return Scaffold(
         body: navegacao,
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: navegacao.currentIndex,
-          onDestinationSelected: _irPara,
-          destinations: [
-            for (final destino in _destinos)
-              NavigationDestination(
-                icon: Icon(destino.icone),
-                selectedIcon: Icon(destino.iconeSelecionado),
-                label: destino.rotulo,
-              ),
-          ],
+        bottomNavigationBar: DecoratedBox(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: Cores.separador, width: 0.8)),
+          ),
+          child: NavigationBar(
+            selectedIndex: navegacao.currentIndex,
+            onDestinationSelected: _irPara,
+            destinations: [
+              for (final destino in _destinos)
+                NavigationDestination(
+                  icon: Icon(destino.icone),
+                  selectedIcon: Icon(destino.iconeSelecionado),
+                  label: destino.rotulo,
+                ),
+            ],
+          ),
         ),
       );
     }
     return Scaffold(
-      body: Row(
-        children: [
-          NavigationRail(
-            extended: largura >= larguraParaMenuExpandido,
-            labelType: largura >= larguraParaMenuExpandido ? null : NavigationRailLabelType.all,
-            selectedIndex: navegacao.currentIndex,
-            onDestinationSelected: _irPara,
-            leading: _Marca(comNome: largura >= larguraParaMenuExpandido),
-            destinations: [
-              for (final destino in _destinos)
-                NavigationRailDestination(
-                  icon: Icon(destino.icone),
-                  selectedIcon: Icon(destino.iconeSelecionado),
-                  label: Text(destino.rotulo),
+      body: SafeArea(
+        child: FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: Row(
+            children: [
+              FocusTraversalOrder(
+                order: const NumericFocusOrder(1),
+                child: SizedBox(
+                  width: _larguraDaBarraLateral,
+                  child: _BarraLateral(destinos: _destinos, selecionado: navegacao.currentIndex, aoSelecionar: _irPara),
                 ),
+              ),
+              Expanded(
+                child: FocusTraversalOrder(order: const NumericFocusOrder(2), child: navegacao),
+              ),
             ],
           ),
-          const VerticalDivider(width: 1),
-          Expanded(child: navegacao),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _Marca extends StatelessWidget {
-  const _Marca({required this.comNome});
+class _BarraLateral extends StatelessWidget {
+  const _BarraLateral({required this.destinos, required this.selecionado, required this.aoSelecionar});
 
-  final bool comNome;
+  final List<_Destino> destinos;
+  final int selecionado;
+  final ValueChanged<int> aoSelecionar;
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context);
+    final tema = Theme.of(context).textTheme;
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Cores.superficie,
+        border: Border(right: BorderSide(color: Cores.separador, width: 0.8)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Marca(altura: 40)),
+            const SizedBox(height: 36),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: ExcludeSemantics(child: Text('GESTÃO', style: tema.labelMedium)),
+            ),
+            const SizedBox(height: 8),
+            for (final (indice, destino) in destinos.indexed)
+              _ItemDaBarraLateral(
+                destino: destino,
+                selecionado: indice == selecionado,
+                aoTocar: () => aoSelecionar(indice),
+              ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text('Gerenciamento de Obrigações', style: tema.bodySmall),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ItemDaBarraLateral extends StatelessWidget {
+  const _ItemDaBarraLateral({required this.destino, required this.selecionado, required this.aoTocar});
+
+  static const _alturaMinima = 48.0;
+
+  final _Destino destino;
+  final bool selecionado;
+  final VoidCallback aoTocar;
+
+  @override
+  Widget build(BuildContext context) {
+    final cor = selecionado ? Cores.douradoTexto : Cores.texto;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.task_alt,
-            size: 32,
-            color: tema.colorScheme.tertiary,
-            semanticLabel: comNome ? null : 'Obrigações',
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Material(
+        color: selecionado ? Cores.douradoSuave : Colors.transparent,
+        borderRadius: Raios.pequeno,
+        child: InkWell(
+          onTap: aoTocar,
+          borderRadius: Raios.pequeno,
+          hoverColor: Cores.sobreposicao,
+          child: Semantics(
+            selected: selecionado,
+            button: true,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: _alturaMinima),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(selecionado ? destino.iconeSelecionado : destino.icone, size: 21, color: cor),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        destino.rotulo,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge
+                            ?.copyWith(fontWeight: selecionado ? FontWeight.w600 : FontWeight.w500, color: cor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          if (comNome) ...[const SizedBox(width: 12), Text('Obrigações', style: tema.textTheme.titleLarge)],
-        ],
+        ),
       ),
     );
   }

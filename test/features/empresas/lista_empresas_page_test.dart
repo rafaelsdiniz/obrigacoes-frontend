@@ -43,7 +43,7 @@ void main() {
     await abrir(tester);
 
     expect(find.text('Contábil Alfa LTDA'), findsOneWidget);
-    expect(find.text('11.222.333/0001-81 · Alfa'), findsOneWidget);
+    expect(find.text('11.222.333/0001-81 · Alfa · contato@alfa.com.br'), findsOneWidget);
     expect(find.text('Ativa'), findsOneWidget);
     expect(find.text('Todas'), findsOneWidget);
     expect(find.text('1 registro'), findsOneWidget);
@@ -90,10 +90,13 @@ void main() {
     when(() => repositorio.listar(any()))
         .thenAnswer((_) async => paginaCom([], numero: 1, totalItens: 20, totalPaginas: 1));
 
+    await tester.ensureVisible(find.byTooltip('Próxima página'));
     await tester.tap(find.byTooltip('Próxima página'));
     await tester.pumpAndSettle();
     expect(find.text('Nenhuma empresa encontrada'), findsOneWidget);
 
+    await tester.ensureVisible(find.byTooltip('Página anterior'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Página anterior'));
     await tester.pumpAndSettle();
     final filtro = verify(() => repositorio.listar(captureAny())).captured.last as FiltroCadastro;

@@ -21,6 +21,7 @@ class MenuDeCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PopupMenuButton<_AcaoDeCadastro>(
     tooltip: 'Ações de $nome',
+    icon: const Icon(Icons.more_horiz_rounded),
     onSelected: (acao) => switch (acao) {
       _AcaoDeCadastro.editar => aoEditar(),
       _AcaoDeCadastro.alterarSituacao => aoAlterarSituacao(),
