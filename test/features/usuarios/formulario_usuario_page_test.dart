@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:obrigacoes_app/core/widgets/campo_de_texto.dart';
 import 'package:obrigacoes_app/features/usuarios/data/usuario_repository.dart';
 import 'package:obrigacoes_app/features/usuarios/domain/usuario.dart';
 import 'package:obrigacoes_app/features/usuarios/presentation/formulario_usuario_page.dart';
@@ -36,12 +37,17 @@ void main() {
     ],
   );
 
-  Finder campo(String rotulo) => find.widgetWithText(TextFormField, rotulo);
+  Finder campo(String rotulo) => find.descendant(
+    of: find.byWidgetPredicate((widget) => widget is CampoDeTexto && widget.rotulo == rotulo),
+    matching: find.byType(TextFormField),
+  );
 
   testWidgets('exige nome e e-mail válido', (tester) async {
     await abrir(tester, rota: '/usuarios/novo');
 
-    await tester.enterText(campo('E-mail *'), 'ana@escritorio');
+    await tester.enterText(campo('E-mail'), 'ana@escritorio');
+    await tester.ensureVisible(find.text('Salvar'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
 
@@ -54,9 +60,11 @@ void main() {
     when(() => repositorio.cadastrar(any())).thenAnswer((_) async => usuarioDeExemplo());
     await abrir(tester, rota: '/usuarios/novo');
 
-    await tester.enterText(campo('Nome *'), 'Ana Souza');
-    await tester.enterText(campo('E-mail *'), 'ana@escritorio.com.br');
+    await tester.enterText(campo('Nome'), 'Ana Souza');
+    await tester.enterText(campo('E-mail'), 'ana@escritorio.com.br');
     await tester.enterText(campo('Cargo'), 'Analista Fiscal');
+    await tester.ensureVisible(find.text('Salvar'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
 
@@ -73,6 +81,8 @@ void main() {
 
     expect(find.text('ana@escritorio.com.br'), findsOneWidget);
     await tester.enterText(campo('Cargo'), 'Coordenadora Fiscal');
+    await tester.ensureVisible(find.text('Salvar'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
 

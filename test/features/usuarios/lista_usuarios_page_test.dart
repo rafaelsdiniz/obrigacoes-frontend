@@ -35,7 +35,7 @@ void main() {
     await abrir(tester);
 
     expect(find.text('Ana Souza'), findsOneWidget);
-    expect(find.text('ana@escritorio.com.br · Analista Fiscal'), findsOneWidget);
+    expect(find.text('ana@escritorio.com.br  ·  Analista Fiscal'), findsOneWidget);
     expect(find.text('Ativo'), findsOneWidget);
     expect(find.text('Todos'), findsOneWidget);
   });

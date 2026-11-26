@@ -8,9 +8,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/formatacao/cnpj.dart';
 import '../../../core/formatacao/validacoes.dart';
 import '../../../core/widgets/avisos.dart';
+import '../../../core/widgets/campo_de_texto.dart';
+import '../../../core/widgets/campo_do_formulario.dart';
 import '../../../core/widgets/envio_de_formulario.dart';
 import '../../../core/widgets/estrutura_formulario.dart';
 import '../../../core/widgets/formulario_com_carregamento.dart';
+import '../../../core/widgets/secao_do_formulario.dart';
 import '../domain/empresa.dart';
 import 'empresas_providers.dart';
 import 'rotas_empresas.dart';
@@ -90,57 +93,75 @@ class _FormularioEmpresaState extends ConsumerState<_FormularioEmpresa> with Env
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,
-    campos: [
-      CampoDoFormulario(
-        TextFormField(
-          controller: _razaoSocial,
-          decoration: const InputDecoration(labelText: 'Razão social *'),
-          validator: validarCampo('razaoSocial', Validacoes.obrigatorio('A razão social é obrigatória.', maximo: 150)),
-          onChanged: (_) => campoAlterado('razaoSocial'),
-          textInputAction: TextInputAction.next,
-        ),
-        larguraInteira: true,
+    secoes: [
+      SecaoDoFormulario(
+        titulo: 'Identificação',
+        descricao: 'Dados que identificam a empresa perante a Receita Federal.',
+        campos: [
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'Razão social',
+              obrigatorio: true,
+              controlador: _razaoSocial,
+              validador: validarCampo(
+                'razaoSocial',
+                Validacoes.obrigatorio('A razão social é obrigatória.', maximo: 150),
+              ),
+              aoAlterar: (_) => campoAlterado('razaoSocial'),
+            ),
+            larguraInteira: true,
+          ),
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'CNPJ',
+              obrigatorio: true,
+              controlador: _cnpj,
+              dica: '00.000.000/0000-00',
+              ajuda: 'Aceita o formato numérico e o alfanumérico.',
+              formatadores: [MascaraCnpj()],
+              capitalizacao: TextCapitalization.characters,
+              validador: validarCampo('cnpj', Validacoes.cnpj),
+              aoAlterar: (_) => campoAlterado('cnpj'),
+            ),
+          ),
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'Nome fantasia',
+              controlador: _nomeFantasia,
+              validador: validarCampo('nomeFantasia', Validacoes.tamanhoMaximo(150)),
+              aoAlterar: (_) => campoAlterado('nomeFantasia'),
+            ),
+          ),
+        ],
       ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _nomeFantasia,
-          decoration: const InputDecoration(labelText: 'Nome fantasia'),
-          validator: validarCampo('nomeFantasia', Validacoes.tamanhoMaximo(150)),
-          onChanged: (_) => campoAlterado('nomeFantasia'),
-          textInputAction: TextInputAction.next,
-        ),
-      ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _cnpj,
-          decoration: const InputDecoration(labelText: 'CNPJ *', hintText: 'Numérico ou alfanumérico'),
-          inputFormatters: [MascaraCnpj()],
-          textCapitalization: TextCapitalization.characters,
-          validator: validarCampo('cnpj', Validacoes.cnpj),
-          onChanged: (_) => campoAlterado('cnpj'),
-          textInputAction: TextInputAction.next,
-        ),
-      ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _email,
-          decoration: const InputDecoration(labelText: 'E-mail'),
-          keyboardType: TextInputType.emailAddress,
-          validator: validarCampo('email', Validacoes.todas([Validacoes.tamanhoMaximo(150), Validacoes.email])),
-          onChanged: (_) => campoAlterado('email'),
-          textInputAction: TextInputAction.next,
-        ),
-      ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _telefone,
-          decoration: const InputDecoration(labelText: 'Telefone'),
-          keyboardType: TextInputType.phone,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9()+\- ]'))],
-          validator: validarCampo('telefone', Validacoes.tamanhoMaximo(20)),
-          onChanged: (_) => campoAlterado('telefone'),
-          onFieldSubmitted: (_) => unawaited(_salvar()),
-        ),
+      SecaoDoFormulario(
+        titulo: 'Contato',
+        descricao: 'Canais usados pelo escritório para falar com a empresa.',
+        campos: [
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'E-mail',
+              controlador: _email,
+              dica: 'Ex.: financeiro@empresa.com.br',
+              teclado: TextInputType.emailAddress,
+              validador: validarCampo('email', Validacoes.todas([Validacoes.tamanhoMaximo(150), Validacoes.email])),
+              aoAlterar: (_) => campoAlterado('email'),
+            ),
+          ),
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'Telefone',
+              controlador: _telefone,
+              dica: 'Ex.: (63) 3333-4444',
+              teclado: TextInputType.phone,
+              formatadores: [FilteringTextInputFormatter.allow(RegExp(r'[0-9()+\- ]'))],
+              validador: validarCampo('telefone', Validacoes.tamanhoMaximo(20)),
+              aoAlterar: (_) => campoAlterado('telefone'),
+              acaoDoTeclado: TextInputAction.done,
+              aoConfirmar: (_) => unawaited(_salvar()),
+            ),
+          ),
+        ],
       ),
     ],
   );

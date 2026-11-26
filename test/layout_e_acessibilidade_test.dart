@@ -7,7 +7,7 @@ import 'package:obrigacoes_app/app/roteador.dart';
 import 'package:obrigacoes_app/core/config/configuracao.dart';
 import 'package:obrigacoes_app/core/dominio/filtro_cadastro.dart';
 import 'package:obrigacoes_app/core/dominio/situacao.dart';
-import 'package:obrigacoes_app/core/widgets/selo.dart';
+import 'package:obrigacoes_app/core/widgets/indicador.dart';
 import 'package:obrigacoes_app/features/empresas/data/empresa_repository.dart';
 import 'package:obrigacoes_app/features/usuarios/data/usuario_repository.dart';
 
@@ -81,6 +81,6 @@ void main() {
     await abrir(tester, const Size(1280, 800));
 
     expect(tester.getTopLeft(find.text('CNPJ')).dx, tester.getTopLeft(find.text('11.222.333/0001-81').first).dx);
-    expect(tester.getTopLeft(find.text('SITUAÇÃO')).dx, tester.getTopLeft(find.byType(Selo).first).dx);
+    expect(tester.getTopLeft(find.text('SITUAÇÃO')).dx, tester.getTopLeft(find.byType(Indicador).first).dx);
   });
 }

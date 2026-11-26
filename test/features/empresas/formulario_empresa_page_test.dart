@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:obrigacoes_app/core/http/erro_api.dart';
+import 'package:obrigacoes_app/core/widgets/campo_de_texto.dart';
 import 'package:obrigacoes_app/features/empresas/data/empresa_repository.dart';
 import 'package:obrigacoes_app/features/empresas/domain/empresa.dart';
 import 'package:obrigacoes_app/features/empresas/presentation/formulario_empresa_page.dart';
@@ -46,14 +47,19 @@ void main() {
     ],
   );
 
-  Finder campo(String rotulo) => find.widgetWithText(TextFormField, rotulo);
+  Finder campo(String rotulo) => find.descendant(
+    of: find.byWidgetPredicate((widget) => widget is CampoDeTexto && widget.rotulo == rotulo),
+    matching: find.byType(TextFormField),
+  );
 
   Future<void> preencherObrigatorios(WidgetTester tester) async {
-    await tester.enterText(campo('Razão social *'), '  Contábil Alfa LTDA ');
-    await tester.enterText(campo('CNPJ *'), '11222333000181');
+    await tester.enterText(campo('Razão social'), '  Contábil Alfa LTDA ');
+    await tester.enterText(campo('CNPJ'), '11222333000181');
   }
 
   Future<void> salvar(WidgetTester tester) async {
+    await tester.ensureVisible(find.text('Salvar'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
   }
@@ -61,7 +67,7 @@ void main() {
   testWidgets('valida os campos obrigatórios e o CNPJ antes de enviar', (tester) async {
     await abrir(tester, rota: '/empresas/nova');
 
-    await tester.enterText(campo('CNPJ *'), '11222333000182');
+    await tester.enterText(campo('CNPJ'), '11222333000182');
     await salvar(tester);
 
     expect(find.text('A razão social é obrigatória.'), findsOneWidget);
@@ -158,6 +164,7 @@ void main() {
 
     when(() => repositorio.buscar(7))
         .thenAnswer((_) async => empresaDeExemplo(id: 7, versao: 1, nomeFantasia: 'Alfa Atualizada'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Recarregar'));
     await tester.pumpAndSettle();
 

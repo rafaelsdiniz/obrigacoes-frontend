@@ -3,9 +3,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/layout/medidas.dart';
 import '../core/tema/tema.dart';
+import '../core/widgets/icone.dart';
 import '../core/widgets/marca.dart';
 
-typedef _Destino = ({IconData icone, IconData iconeSelecionado, String rotulo});
+typedef _Destino = ({Icones icone, String rotulo});
 
 class EstruturaNavegacao extends StatelessWidget {
   const EstruturaNavegacao({required this.navegacao, super.key});
@@ -13,8 +14,8 @@ class EstruturaNavegacao extends StatelessWidget {
   static const _larguraDaBarraLateral = 264.0;
 
   static const List<_Destino> _destinos = [
-    (icone: Icons.apartment_outlined, iconeSelecionado: Icons.apartment_rounded, rotulo: 'Empresas'),
-    (icone: Icons.group_outlined, iconeSelecionado: Icons.group_rounded, rotulo: 'Usuários'),
+    (icone: Icones.empresas, rotulo: 'Empresas'),
+    (icone: Icones.usuarios, rotulo: 'Usuários'),
   ];
 
   final StatefulNavigationShell navegacao;
@@ -36,8 +37,8 @@ class EstruturaNavegacao extends StatelessWidget {
             destinations: [
               for (final destino in _destinos)
                 NavigationDestination(
-                  icon: Icon(destino.icone),
-                  selectedIcon: Icon(destino.iconeSelecionado),
+                  icon: Icone(destino.icone, tamanho: 22, cor: Cores.textoSecundario),
+                  selectedIcon: Icone(destino.icone, tamanho: 22, cor: Cores.dourado),
                   label: destino.rotulo,
                 ),
             ],
@@ -125,11 +126,11 @@ class _ItemDaBarraLateral extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = selecionado ? Cores.douradoTexto : Cores.texto;
+    final cor = selecionado ? Colors.white : Cores.texto;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
-        color: selecionado ? Cores.douradoSuave : Colors.transparent,
+        color: selecionado ? Cores.grafite : Colors.transparent,
         borderRadius: Raios.pequeno,
         child: InkWell(
           onTap: aoTocar,
@@ -144,7 +145,7 @@ class _ItemDaBarraLateral extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: Row(
                   children: [
-                    Icon(selecionado ? destino.iconeSelecionado : destino.icone, size: 21, color: cor),
+                    Icone(destino.icone, tamanho: 21, cor: selecionado ? Cores.dourado : Cores.textoSecundario),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(

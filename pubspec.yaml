@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.5.0
+  flutter_svg: ^2.5.1
   flutter_web_plugins:
     sdk: flutter
   go_router: ^18.1.4
@@ -24,6 +25,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/icones/
     - assets/imagens/
     - assets/fontes/inter/LICENSE.txt
   fonts:

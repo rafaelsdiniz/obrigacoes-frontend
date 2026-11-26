@@ -13,15 +13,11 @@ abstract final class Cores {
   static const douradoSuave = Color(0xFFFFF3D6);
   static const douradoTexto = Color(0xFF9A5B00);
   static const sucesso = Color(0xFF17703A);
-  static const sucessoSuave = Color(0xFFE3F5EA);
-  static const erro = Color(0xFFC5221F);
+  static const atencao = Color(0xFF8A5300);
+  static const informacao = Color(0xFF2453C2);
+  static const erro = Color(0xFFB42318);
+  static const bordaDoCampo = Color(0xFF8A8A92);
   static const sobreposicao = Color(0x0A1D1D1F);
-
-  static const degradeDaMarca = LinearGradient(
-    colors: [dourado, laranja],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
 }
 
 abstract final class Raios {
@@ -81,10 +77,16 @@ abstract final class Tema {
       iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom(foregroundColor: Cores.textoSecundario)),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Cores.preenchimento,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: const OutlineInputBorder(borderRadius: Raios.pequeno, borderSide: BorderSide.none),
-        enabledBorder: const OutlineInputBorder(borderRadius: Raios.pequeno, borderSide: BorderSide.none),
+        fillColor: Cores.fundo,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        border: const OutlineInputBorder(
+          borderRadius: Raios.pequeno,
+          borderSide: BorderSide(color: Cores.bordaDoCampo),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: Raios.pequeno,
+          borderSide: BorderSide(color: Cores.bordaDoCampo),
+        ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: Raios.pequeno,
           borderSide: BorderSide(color: Cores.douradoTexto, width: 2),
@@ -133,13 +135,13 @@ abstract final class Tema {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Cores.superficie,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: Cores.douradoSuave,
+        indicatorColor: Cores.grafite,
         elevation: 0,
         height: 68,
-        labelTextStyle: WidgetStatePropertyAll(texto.labelSmall),
-        iconTheme: WidgetStateProperty.resolveWith(
-          (estados) =>
-              IconThemeData(color: estados.contains(WidgetState.selected) ? Cores.douradoTexto : Cores.textoSecundario),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (estados) => texto.labelSmall?.copyWith(
+            color: estados.contains(WidgetState.selected) ? Cores.texto : Cores.textoSecundario,
+          ),
         ),
       ),
       tooltipTheme: TooltipThemeData(

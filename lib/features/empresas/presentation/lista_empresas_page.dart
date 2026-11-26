@@ -6,10 +6,10 @@ import '../../../core/dominio/termos_do_cadastro.dart';
 import '../../../core/formatacao/cnpj.dart';
 import '../../../core/widgets/alteracao_de_situacao.dart';
 import '../../../core/widgets/cabecalho_de_colunas.dart';
-import '../../../core/widgets/chip_situacao.dart';
 import '../../../core/widgets/estado_vazio.dart';
 import '../../../core/widgets/filtros_de_cadastro.dart';
-import '../../../core/widgets/icone_em_quadro.dart';
+import '../../../core/widgets/icone.dart';
+import '../../../core/widgets/indicador_de_situacao.dart';
 import '../../../core/widgets/linha_de_cadastro.dart';
 import '../../../core/widgets/lista_paginada.dart';
 import '../../../core/widgets/menu_de_cadastro.dart';
@@ -43,10 +43,10 @@ class ListaEmpresasPage extends ConsumerWidget {
         cabecalho: const CabecalhoDeColunas(
           titulo: 'Empresa',
           detalhes: ['CNPJ', 'Nome fantasia', 'E-mail'],
-          selo: 'Situação',
+          situacao: 'Situação',
         ),
         vazio: const EstadoVazio(
-          icone: Icons.apartment_rounded,
+          icone: Icones.empresas,
           titulo: 'Nenhuma empresa encontrada',
           mensagem: 'Cadastre uma empresa ou ajuste os filtros.',
         ),
@@ -67,10 +67,9 @@ class _LinhaEmpresa extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cadastro = ref.watch(cadastroDeEmpresasProvider);
     return LinhaDeCadastro(
-      avatar: const IconeEmQuadro(Icons.apartment_rounded),
       titulo: empresa.razaoSocial,
       detalhes: [Cnpj.formatar(empresa.cnpj), empresa.nomeFantasia ?? '', empresa.email ?? ''],
-      selo: ChipSituacao(situacao: empresa.situacao, termos: _termos),
+      situacao: IndicadorDeSituacao(situacao: empresa.situacao, termos: _termos),
       aoTocar: () => context.go(RotasEmpresas.edicao(empresa.id)),
       menu: MenuDeCadastro(
         nome: empresa.razaoSocial,

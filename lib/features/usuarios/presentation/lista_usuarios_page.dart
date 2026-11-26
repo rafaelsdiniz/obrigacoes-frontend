@@ -4,11 +4,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/dominio/termos_do_cadastro.dart';
 import '../../../core/widgets/alteracao_de_situacao.dart';
-import '../../../core/widgets/avatar_de_iniciais.dart';
 import '../../../core/widgets/cabecalho_de_colunas.dart';
-import '../../../core/widgets/chip_situacao.dart';
 import '../../../core/widgets/estado_vazio.dart';
 import '../../../core/widgets/filtros_de_cadastro.dart';
+import '../../../core/widgets/icone.dart';
+import '../../../core/widgets/indicador_de_situacao.dart';
 import '../../../core/widgets/linha_de_cadastro.dart';
 import '../../../core/widgets/lista_paginada.dart';
 import '../../../core/widgets/menu_de_cadastro.dart';
@@ -39,9 +39,9 @@ class ListaUsuariosPage extends ConsumerWidget {
       ),
       conteudo: ListaPaginada<Usuario>(
         estado: ref.watch(paginaUsuariosProvider),
-        cabecalho: const CabecalhoDeColunas(titulo: 'Nome', detalhes: ['E-mail', 'Cargo'], selo: 'Situação'),
+        cabecalho: const CabecalhoDeColunas(titulo: 'Nome', detalhes: ['E-mail', 'Cargo'], situacao: 'Situação'),
         vazio: const EstadoVazio(
-          icone: Icons.group_rounded,
+          icone: Icones.usuarios,
           titulo: 'Nenhum usuário encontrado',
           mensagem: 'Cadastre um usuário ou ajuste os filtros.',
         ),
@@ -62,10 +62,9 @@ class _LinhaUsuario extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cadastro = ref.watch(cadastroDeUsuariosProvider);
     return LinhaDeCadastro(
-      avatar: AvatarDeIniciais(usuario.nome),
       titulo: usuario.nome,
       detalhes: [usuario.email, usuario.cargo ?? ''],
-      selo: ChipSituacao(situacao: usuario.situacao, termos: _termos),
+      situacao: IndicadorDeSituacao(situacao: usuario.situacao, termos: _termos),
       aoTocar: () => context.go(RotasUsuarios.edicao(usuario.id)),
       menu: MenuDeCadastro(
         nome: usuario.nome,

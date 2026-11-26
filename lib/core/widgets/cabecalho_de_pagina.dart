@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../layout/medidas.dart';
 import '../tema/tema.dart';
+import 'icone.dart';
 
 class CabecalhoDePagina extends StatelessWidget {
   const CabecalhoDePagina({required this.titulo, this.subtitulo, this.aoVoltar, this.acoes = const [], super.key});
@@ -17,11 +18,7 @@ class CabecalhoDePagina extends StatelessWidget {
     return Row(
       children: [
         if (aoVoltar case final voltar?) ...[
-          IconButton(
-            tooltip: 'Voltar',
-            onPressed: voltar,
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          ),
+          IconButton(tooltip: 'Voltar', onPressed: voltar, icon: const Icone(Icones.voltar, tamanho: 22)),
           const SizedBox(width: 4),
         ],
         Expanded(

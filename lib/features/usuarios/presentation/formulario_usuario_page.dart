@@ -6,9 +6,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/formatacao/validacoes.dart';
 import '../../../core/widgets/avisos.dart';
+import '../../../core/widgets/campo_de_texto.dart';
+import '../../../core/widgets/campo_do_formulario.dart';
 import '../../../core/widgets/envio_de_formulario.dart';
 import '../../../core/widgets/estrutura_formulario.dart';
 import '../../../core/widgets/formulario_com_carregamento.dart';
+import '../../../core/widgets/secao_do_formulario.dart';
 import '../domain/usuario.dart';
 import 'rotas_usuarios.dart';
 import 'usuarios_providers.dart';
@@ -78,38 +81,54 @@ class _FormularioUsuarioState extends ConsumerState<_FormularioUsuario> with Env
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,
-    campos: [
-      CampoDoFormulario(
-        TextFormField(
-          controller: _nome,
-          decoration: const InputDecoration(labelText: 'Nome *'),
-          validator: validarCampo('nome', Validacoes.obrigatorio('O nome é obrigatório.', maximo: 120)),
-          onChanged: (_) => campoAlterado('nome'),
-          textInputAction: TextInputAction.next,
-        ),
-        larguraInteira: true,
-      ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _email,
-          decoration: const InputDecoration(labelText: 'E-mail *'),
-          keyboardType: TextInputType.emailAddress,
-          validator: validarCampo(
-            'email',
-            Validacoes.todas([Validacoes.obrigatorio('O e-mail é obrigatório.', maximo: 150), Validacoes.email]),
+    secoes: [
+      SecaoDoFormulario(
+        titulo: 'Dados pessoais',
+        descricao: 'Identificam o colaborador nas obrigações sob sua responsabilidade.',
+        campos: [
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'Nome',
+              obrigatorio: true,
+              controlador: _nome,
+              capitalizacao: TextCapitalization.words,
+              validador: validarCampo('nome', Validacoes.obrigatorio('O nome é obrigatório.', maximo: 120)),
+              aoAlterar: (_) => campoAlterado('nome'),
+            ),
+            larguraInteira: true,
           ),
-          onChanged: (_) => campoAlterado('email'),
-          textInputAction: TextInputAction.next,
-        ),
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'E-mail',
+              obrigatorio: true,
+              controlador: _email,
+              dica: 'Ex.: nome@escritorio.com.br',
+              teclado: TextInputType.emailAddress,
+              validador: validarCampo(
+                'email',
+                Validacoes.todas([Validacoes.obrigatorio('O e-mail é obrigatório.', maximo: 150), Validacoes.email]),
+              ),
+              aoAlterar: (_) => campoAlterado('email'),
+            ),
+          ),
+        ],
       ),
-      CampoDoFormulario(
-        TextFormField(
-          controller: _cargo,
-          decoration: const InputDecoration(labelText: 'Cargo'),
-          validator: validarCampo('cargo', Validacoes.tamanhoMaximo(80)),
-          onChanged: (_) => campoAlterado('cargo'),
-          onFieldSubmitted: (_) => unawaited(_salvar()),
-        ),
+      SecaoDoFormulario(
+        titulo: 'Atuação',
+        descricao: 'Função do colaborador no escritório.',
+        campos: [
+          CampoDoFormulario(
+            CampoDeTexto(
+              rotulo: 'Cargo',
+              controlador: _cargo,
+              dica: 'Ex.: Analista fiscal',
+              validador: validarCampo('cargo', Validacoes.tamanhoMaximo(80)),
+              aoAlterar: (_) => campoAlterado('cargo'),
+              acaoDoTeclado: TextInputAction.done,
+              aoConfirmar: (_) => unawaited(_salvar()),
+            ),
+          ),
+        ],
       ),
     ],
   );
