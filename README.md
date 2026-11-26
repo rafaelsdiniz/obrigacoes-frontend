@@ -26,11 +26,8 @@
 
 ---
 
-![Painel](docs/telas/painel.png)
-
 ## Sumário
 
-- [Telas](#telas)
 - [Funcionalidades](#funcionalidades)
 - [Tecnologias](#tecnologias)
 - [Execução](#execução)
@@ -40,28 +37,7 @@
 - [Design system](#design-system)
 - [Decisões arquiteturais](#decisões-arquiteturais)
 - [Melhorias futuras](#melhorias-futuras)
-
-## Telas
-
-| Obrigações | Detalhe da obrigação |
-|---|---|
-| ![Obrigações](docs/telas/obrigacoes.png) | ![Detalhe da obrigação](docs/telas/obrigacao-detalhe.png) |
-
-| Busca global | Nova obrigação |
-|---|---|
-| ![Busca global](docs/telas/busca-global.png) | ![Nova obrigação](docs/telas/obrigacao-nova.png) |
-
-| Empresas | Usuários |
-|---|---|
-| ![Empresas](docs/telas/empresas.png) | ![Usuários](docs/telas/usuarios.png) |
-
-| Tema escuro | Detalhe no tema escuro |
-|---|---|
-| ![Painel no tema escuro](docs/telas/painel-escuro.png) | ![Detalhe no tema escuro](docs/telas/obrigacao-detalhe-escuro.png) |
-
-| Painel no celular | Obrigações no celular | Detalhe no celular |
-|---|---|---|
-| ![Painel no celular](docs/telas/painel-celular.png) | ![Obrigações no celular](docs/telas/obrigacoes-celular.png) | ![Detalhe no celular](docs/telas/obrigacao-detalhe-celular.png) |
+- [Telas](#telas)
 
 ## Funcionalidades
 
@@ -227,3 +203,27 @@ As decisões do sistema estão registradas nos [ADRs do backend](https://github.
 - Progresso em porcentagem no envio de anexos e pré-visualização de PDFs e imagens.
 - Notificações de vencimento no aplicativo.
 - Testes de ponta a ponta automatizados (`integration_test`) contra a API real no CI.
+
+## Telas
+
+![Painel](docs/telas/painel.png)
+
+| Obrigações | Detalhe da obrigação |
+|---|---|
+| ![Obrigações](docs/telas/obrigacoes.png) | ![Detalhe da obrigação](docs/telas/obrigacao-detalhe.png) |
+
+| Busca global | Nova obrigação |
+|---|---|
+| ![Busca global](docs/telas/busca-global.png) | ![Nova obrigação](docs/telas/obrigacao-nova.png) |
+
+| Empresas | Usuários |
+|---|---|
+| ![Empresas](docs/telas/empresas.png) | ![Usuários](docs/telas/usuarios.png) |
+
+| Tema escuro | Detalhe no tema escuro |
+|---|---|
+| ![Painel no tema escuro](docs/telas/painel-escuro.png) | ![Detalhe no tema escuro](docs/telas/obrigacao-detalhe-escuro.png) |
+
+| Painel no celular | Obrigações no celular | Detalhe no celular |
+|---|---|---|
+| ![Painel no celular](docs/telas/painel-celular.png) | ![Obrigações no celular](docs/telas/obrigacoes-celular.png) | ![Detalhe no celular](docs/telas/obrigacao-detalhe-celular.png) |
