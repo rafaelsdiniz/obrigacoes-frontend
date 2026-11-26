@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/dominio/filtro_cadastro.dart';
 import '../../../core/dominio/situacao.dart';
+import '../../../core/estado/alteracoes_de_cadastro.dart';
 import '../../../core/estado/filtro_cadastro_notifier.dart';
 import '../../../core/http/pagina.dart';
 import '../data/empresa_repository.dart';
@@ -37,5 +38,6 @@ class CadastroDeEmpresas {
   Future<void> _atualizandoLista(Future<Empresa> Function() operacao) async {
     await operacao();
     _ref.invalidate(paginaEmpresasProvider);
+    _ref.read(alteracoesDeCadastroProvider.notifier).registrar();
   }
 }
