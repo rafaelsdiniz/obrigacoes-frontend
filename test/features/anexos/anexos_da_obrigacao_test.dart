@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -66,6 +67,70 @@ void main() {
     verify(() => falsos.anexos.enviar(10, nome: 'guia.pdf', bytes: Uint8List.fromList([1, 2, 3]))).called(1);
     expect(find.text('Arquivo anexado.'), findsOneWidget);
     expect(find.text('guia.pdf'), findsOneWidget);
+  });
+
+  testWidgets('recusa antes do envio um arquivo com extensão que a API não aceita', (tester) async {
+    final falsos = repositoriosComDados();
+    escolherArquivo(falsos, nome: 'instalador.exe');
+    await abrirDetalhe(tester, repositorios: falsos);
+
+    await tocar(tester, find.text('Anexar arquivo'));
+
+    expect(find.text('"instalador.exe" não é aceito. Envie ${TipoDeAnexo.descricaoDosAceitos}.'), findsOneWidget);
+    verifyNever(
+      () => falsos.anexos.enviar(
+        any(),
+        nome: any(named: 'nome'),
+        bytes: any(named: 'bytes'),
+      ),
+    );
+  });
+
+  testWidgets('a área tracejada também abre o seletor de arquivos', (tester) async {
+    final falsos = repositoriosComDados();
+    escolherArquivo(falsos);
+    when(
+      () => falsos.anexos.enviar(
+        any(),
+        nome: any(named: 'nome'),
+        bytes: any(named: 'bytes'),
+      ),
+    ).thenAnswer((_) async => anexoDeExemplo(id: 2, nome: 'guia.pdf'));
+    await abrirDetalhe(tester, repositorios: falsos);
+
+    await tocar(tester, find.text('Arraste arquivos para cá ou clique para escolher'));
+
+    verify(() => falsos.anexos.enviar(10, nome: 'guia.pdf', bytes: Uint8List.fromList([1, 2, 3]))).called(1);
+    expect(find.text('Arquivo anexado.'), findsOneWidget);
+  });
+
+  testWidgets('envia todos os arquivos soltos na área de envio', (tester) async {
+    final falsos = repositoriosComDados();
+    when(
+      () => falsos.anexos.enviar(
+        any(),
+        nome: any(named: 'nome'),
+        bytes: any(named: 'bytes'),
+      ),
+    ).thenAnswer((_) async => anexoDeExemplo(id: 2, nome: 'guia.pdf'));
+    await abrirDetalhe(tester, repositorios: falsos);
+    final area = tester.widget<DropTarget>(find.byType(DropTarget));
+
+    area.onDragDone!(
+      DropDoneDetails(
+        files: [
+          DropItemFile.fromData(Uint8List.fromList([1]), path: 'guia.pdf'),
+          DropItemFile.fromData(Uint8List.fromList([2]), path: 'planilha.xlsx'),
+        ],
+        localPosition: Offset.zero,
+        globalPosition: Offset.zero,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    verify(() => falsos.anexos.enviar(10, nome: 'guia.pdf', bytes: Uint8List.fromList([1]))).called(1);
+    verify(() => falsos.anexos.enviar(10, nome: 'planilha.xlsx', bytes: Uint8List.fromList([2]))).called(1);
+    expect(find.text('2 arquivos anexados.'), findsOneWidget);
   });
 
   testWidgets('não envia arquivo acima do tamanho máximo', (tester) async {

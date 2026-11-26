@@ -51,7 +51,7 @@ class _CabecalhoDaSecao extends StatelessWidget {
     children: [
       Semantics(header: true, child: Text(titulo, style: Theme.of(context).textTheme.titleMedium)),
       const SizedBox(height: 4),
-      Text(descricao, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Cores.textoSecundario)),
+      Text(descricao, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: context.cores.textoVariante)),
     ],
   );
 }

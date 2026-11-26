@@ -12,9 +12,9 @@ class TextoDoPrazo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cor = switch (prazo.urgencia) {
-      UrgenciaDoPrazo.atrasada => Cores.erro,
-      UrgenciaDoPrazo.venceHoje || UrgenciaDoPrazo.proxima => Cores.atencao,
-      UrgenciaDoPrazo.tranquila || UrgenciaDoPrazo.concluida => Cores.textoSecundario,
+      UrgenciaDoPrazo.atrasada => context.cores.erro,
+      UrgenciaDoPrazo.venceHoje || UrgenciaDoPrazo.proxima => context.cores.aviso,
+      UrgenciaDoPrazo.tranquila || UrgenciaDoPrazo.concluida => context.cores.textoVariante,
     };
     final estilo = Theme.of(context).textTheme.bodySmall
         ?.copyWith(color: cor, fontWeight: prazo.urgencia == UrgenciaDoPrazo.atrasada ? FontWeight.w600 : null);
@@ -22,7 +22,7 @@ class TextoDoPrazo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (prazo.urgencia == UrgenciaDoPrazo.atrasada) ...[
-          Icone(Icones.statusAtrasada, tamanho: 14, cor: cor),
+          Icone(Icones.statusAtrasada, tamanho: TamanhosDeIcone.pequeno, cor: cor),
           const SizedBox(width: 4),
         ],
         Flexible(

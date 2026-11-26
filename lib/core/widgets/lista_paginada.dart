@@ -10,7 +10,6 @@ import 'estado_erro.dart';
 import 'estado_vazio.dart';
 import 'grupo.dart';
 import 'icone.dart';
-import 'linha_de_cadastro.dart';
 
 class ListaPaginada<T> extends StatelessWidget {
   const ListaPaginada({
@@ -53,11 +52,7 @@ class ListaPaginada<T> extends StatelessWidget {
                         const Divider(),
                       ],
                       for (final (indice, item) in pagina.itens.indexed) ...[
-                        if (indice > 0)
-                          const Divider(
-                            indent: LinhaDeCadastro.margemHorizontal,
-                            endIndent: LinhaDeCadastro.margemHorizontal,
-                          ),
+                        if (indice > 0) const Divider(),
                         itemBuilder(context, item),
                       ],
                     ],
@@ -95,7 +90,7 @@ class _ControlePaginacao extends StatelessWidget {
           IconButton(
             tooltip: 'Página anterior',
             onPressed: pagina.temAnterior ? () => aoMudarPagina(pagina.numero - 1) : null,
-            icon: const Icone(Icones.voltar, tamanho: 18),
+            icon: const Icone(Icones.voltar, tamanho: TamanhosDeIcone.padrao),
           ),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: _larguraMaximaDoIndicador),
@@ -109,7 +104,7 @@ class _ControlePaginacao extends StatelessWidget {
           IconButton(
             tooltip: 'Próxima página',
             onPressed: pagina.temProxima ? () => aoMudarPagina(pagina.numero + 1) : null,
-            icon: const Icone(Icones.avancar, tamanho: 18),
+            icon: const Icone(Icones.avancar, tamanho: TamanhosDeIcone.padrao),
           ),
         ],
       ),

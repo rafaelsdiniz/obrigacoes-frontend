@@ -1,5 +1,8 @@
 import '../../../core/dominio/json.dart';
 import '../../../core/dominio/situacao.dart';
+import '../../../core/dominio/termos_do_cadastro.dart';
+
+const termosDaEmpresa = TermosDoCadastro(substantivo: 'Empresa', genero: Genero.feminino);
 
 class Empresa {
   const Empresa({

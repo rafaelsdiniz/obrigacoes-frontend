@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:obrigacoes_app/app/roteador.dart';
 import 'package:obrigacoes_app/core/widgets/indicador.dart';
 
+import 'package:obrigacoes_app/features/obrigacoes/presentation/linha_de_obrigacao.dart';
+
 import 'apoio.dart';
 
 void main() {
@@ -55,6 +57,32 @@ void main() {
       semantica.dispose();
     });
   }
+
+  for (final MapEntry(key: nome, value: tamanho) in {
+    'celular': telas['celular']!,
+    'desktop': telas['desktop']!,
+  }.entries) {
+    testWidgets('no tema escuro, as telas principais atendem contraste no $nome', (tester) async {
+      final semantica = tester.ensureSemantics();
+      final container = await abrirApp(tester, tamanho: tamanho, tema: ThemeMode.dark);
+
+      for (final rota in ['/painel', '/obrigacoes', '/obrigacoes/10', '/empresas', '/obrigacoes/nova']) {
+        container.read(roteadorProvider).go(rota);
+        await tester.pumpAndSettle();
+        expect(Theme.of(tester.element(find.byType(Scaffold).last)).brightness, Brightness.dark);
+        await expectLater(tester, meetsGuideline(textContrastGuideline), reason: rota);
+      }
+      semantica.dispose();
+    });
+  }
+
+  testWidgets('o painel só mostra o cabeçalho das colunas quando as linhas cabem em colunas', (tester) async {
+    await abrirApp(tester, tamanho: const Size(1000, 800));
+    expect(find.byType(CabecalhoDeObrigacoes), findsNothing);
+
+    await abrirApp(tester, tamanho: const Size(1400, 800));
+    expect(find.byType(CabecalhoDeObrigacoes), findsWidgets);
+  });
 
   testWidgets('no desktop o cabeçalho das colunas fica alinhado com os dados', (tester) async {
     final container = await abrirApp(tester, tamanho: const Size(1280, 800));

@@ -19,20 +19,28 @@ class ObrigacaoRepository {
 
   final ClienteApi _api;
 
-  Future<Pagina<Obrigacao>> listar(FiltroObrigacoes filtro) async => Pagina.deJson(
-    await _api.get(
-      _recurso,
-      parametros: {
-        'busca': filtro.busca.trim(),
-        'status': [for (final status in filtro.status) status.valorApi],
-        'atrasada': filtro.somenteAtrasadas ? true : null,
-        'page': filtro.pagina,
-        'size': tamanhoDaPagina,
-        'sort': 'dataVencimento',
-      },
-    ),
-    Obrigacao.deJson,
-  );
+  Future<Pagina<Obrigacao>> listar(FiltroObrigacoes filtro) async {
+    final intervalo = filtro.periodo?.intervalo(Datas.hoje());
+    return Pagina.deJson(
+      await _api.get(
+        _recurso,
+        parametros: {
+          'busca': filtro.busca.trim(),
+          'status': [for (final status in filtro.status) status.valorApi],
+          'atrasada': filtro.somenteAtrasadas ? true : null,
+          'tipo': filtro.tipo?.valorApi,
+          'empresaId': filtro.empresaId,
+          'responsavelId': filtro.responsavelId,
+          'vencimentoDe': intervalo == null ? null : Datas.paraApi(intervalo.de),
+          'vencimentoAte': intervalo == null ? null : Datas.paraApi(intervalo.ate),
+          'page': filtro.pagina,
+          'size': tamanhoDaPagina,
+          'sort': filtro.ordem.valorApi,
+        },
+      ),
+      Obrigacao.deJson,
+    );
+  }
 
   Future<Pagina<Obrigacao>> proximosVencimentos({int quantidade = 6}) async => Pagina.deJson(
     await _api.get(
@@ -47,7 +55,9 @@ class ObrigacaoRepository {
     Obrigacao.deJson,
   );
 
-  Future<ResumoObrigacoes> resumir() async => ResumoObrigacoes.deJson(await _api.get('$_recurso/resumo'));
+  Future<ResumoObrigacoes> resumir({int? empresaId, int? responsavelId}) async => ResumoObrigacoes.deJson(
+    await _api.get('$_recurso/resumo', parametros: {'empresaId': empresaId, 'responsavelId': responsavelId}),
+  );
 
   Future<Obrigacao> buscar(int id) async => Obrigacao.deJson(await _api.get('$_recurso/$id'));
 

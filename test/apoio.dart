@@ -14,6 +14,7 @@ import 'package:obrigacoes_app/core/dominio/filtro_cadastro.dart';
 import 'package:obrigacoes_app/core/dominio/situacao.dart';
 import 'package:obrigacoes_app/core/formatacao/datas.dart';
 import 'package:obrigacoes_app/core/http/pagina.dart';
+import 'package:obrigacoes_app/core/tema/preferencia_de_tema.dart';
 import 'package:obrigacoes_app/core/tema/tema.dart';
 import 'package:obrigacoes_app/features/anexos/data/anexo_repository.dart';
 import 'package:obrigacoes_app/features/anexos/domain/anexo.dart';
@@ -73,16 +74,17 @@ Future<void> abrirTela(
 }
 
 Future<void> carregarFontesDoApp() async {
-  Future<void> carregar(String familia, List<String> arquivos) async {
+  Future<void> carregar(String familia, String pasta, List<String> arquivos) async {
     final carregador = FontLoader(familia);
     for (final arquivo in arquivos) {
-      carregador.addFont(Future.value(ByteData.sublistView(File('assets/fontes/inter/$arquivo').readAsBytesSync())));
+      carregador.addFont(Future.value(ByteData.sublistView(File('assets/fontes/$pasta/$arquivo').readAsBytesSync())));
     }
     await carregador.load();
   }
 
-  await carregar('Inter', ['Inter-Regular.ttf', 'Inter-Medium.ttf', 'Inter-SemiBold.ttf', 'Inter-Bold.ttf']);
-  await carregar('InterDisplay', ['InterDisplay-Bold.ttf']);
+  await carregar('Inter', 'inter', ['Inter-Regular.ttf', 'Inter-Medium.ttf', 'Inter-SemiBold.ttf', 'Inter-Bold.ttf']);
+  await carregar('InterDisplay', 'inter', ['InterDisplay-Bold.ttf']);
+  await carregar('SplineSansMono', 'spline-sans-mono', ['SplineSansMono-500.ttf', 'SplineSansMono-600.ttf']);
 }
 
 class EmpresasFalsas extends Mock implements EmpresaRepository {}
@@ -182,12 +184,21 @@ RepositoriosFalsos repositoriosComDados() {
   when(() => empresas.listar(any()))
       .thenAnswer((_) async => paginaCom([empresaDeExemplo(), empresaDeExemplo(id: 2, situacao: Situacao.inativo)]));
   when(() => empresas.listarAtivas()).thenAnswer((_) async => paginaCom([empresaDeExemplo()]));
+  when(() => empresas.listarTodas()).thenAnswer((_) async => paginaCom([empresaDeExemplo()]));
   when(() => usuarios.listar(any())).thenAnswer((_) async => paginaCom([usuarioDeExemplo()]));
   when(() => usuarios.listarAtivos()).thenAnswer((_) async => paginaCom([usuarioDeExemplo()]));
-  when(() => obrigacoes.listar(any())).thenAnswer((_) async => paginaCom(lista));
+  when(() => usuarios.listarTodos()).thenAnswer((_) async => paginaCom([usuarioDeExemplo()]));
+  when(() => obrigacoes.listar(any())).thenAnswer((invocacao) async {
+    final filtro = invocacao.positionalArguments.single as FiltroObrigacoes;
+    return paginaCom(filtro.somenteAtrasadas ? lista.where((obrigacao) => obrigacao.atrasada).toList() : lista);
+  });
   when(() => obrigacoes.proximosVencimentos()).thenAnswer((_) async => paginaCom(lista.take(1).toList()));
-  when(() => obrigacoes.resumir())
-      .thenAnswer((_) async => const ResumoObrigacoes(pendentes: 1, emAndamento: 1, concluidas: 1, atrasadas: 1));
+  when(
+    () => obrigacoes.resumir(
+      empresaId: any(named: 'empresaId'),
+      responsavelId: any(named: 'responsavelId'),
+    ),
+  ).thenAnswer((_) async => const ResumoObrigacoes(pendentes: 1, emAndamento: 1, concluidas: 1, atrasadas: 1));
   when(() => obrigacoes.buscar(any())).thenAnswer((invocacao) async {
     final id = invocacao.positionalArguments.single as int;
     return lista.firstWhere((obrigacao) => obrigacao.id == id);
@@ -202,11 +213,22 @@ RepositoriosFalsos repositoriosComDados() {
   return (empresas: empresas, usuarios: usuarios, obrigacoes: obrigacoes, anexos: anexos, arquivos: arquivos);
 }
 
+class ArmazenamentoDoTemaEmMemoria implements ArmazenamentoDoTema {
+  ThemeMode? salvo;
+
+  @override
+  Future<ThemeMode> ler() async => salvo ?? ThemeMode.system;
+
+  @override
+  Future<void> salvar(ThemeMode modo) async => salvo = modo;
+}
+
 Future<ProviderContainer> abrirApp(
   WidgetTester tester, {
   required Size tamanho,
   RepositoriosFalsos? repositorios,
   double escalaDoTexto = 1,
+  ThemeMode tema = ThemeMode.light,
 }) async {
   final falsos = repositorios ?? repositoriosComDados();
   tester.view.physicalSize = tamanho;
@@ -223,6 +245,8 @@ Future<ProviderContainer> abrirApp(
         obrigacaoRepositoryProvider.overrideWithValue(falsos.obrigacoes),
         anexoRepositoryProvider.overrideWithValue(falsos.anexos),
         arquivosDoDispositivoProvider.overrideWithValue(falsos.arquivos),
+        armazenamentoDoTemaProvider.overrideWithValue(ArmazenamentoDoTemaEmMemoria()),
+        temaInicialProvider.overrideWithValue(tema),
       ],
       retry: (tentativas, erro) => null,
       child: const ObrigacoesApp(),

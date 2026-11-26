@@ -80,13 +80,13 @@ class _CampoDeDataState extends State<CampoDeData> {
         readOnly: true,
         onTap: _abrirCalendario,
         validator: (_) => widget.validador?.call(widget.valor),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'dd/mm/aaaa',
           suffixIcon: Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icone(Icones.calendario, tamanho: 19, cor: Cores.textoSecundario),
+            padding: const EdgeInsets.only(right: 12),
+            child: Icone(Icones.calendario, tamanho: TamanhosDeIcone.padrao, cor: context.cores.textoVariante),
           ),
-          suffixIconConstraints: BoxConstraints(minWidth: 44),
+          suffixIconConstraints: const BoxConstraints(minWidth: 44),
         ),
       ),
     ),

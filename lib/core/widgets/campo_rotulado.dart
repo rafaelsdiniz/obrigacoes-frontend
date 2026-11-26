@@ -19,14 +19,15 @@ class CampoRotulado extends StatelessWidget {
             text: rotulo,
             children: [
               if (obrigatorio)
-                const TextSpan(
+                TextSpan(
                   text: ' *',
-                  style: TextStyle(color: Cores.erro),
+                  style: TextStyle(color: context.cores.erro),
                   semanticsLabel: ', obrigatório',
                 ),
             ],
           ),
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Cores.texto, fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: context.cores.texto, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         child,

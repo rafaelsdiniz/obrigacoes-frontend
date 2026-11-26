@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../core/dominio/termos_do_cadastro.dart';
 import '../../../core/widgets/alteracao_de_situacao.dart';
 import '../../../core/widgets/cabecalho_de_colunas.dart';
 import '../../../core/widgets/estado_vazio.dart';
@@ -17,8 +16,6 @@ import '../domain/usuario.dart';
 import 'rotas_usuarios.dart';
 import 'usuarios_providers.dart';
 
-const _termos = TermosDoCadastro(substantivo: 'Usuário', genero: Genero.masculino);
-
 class ListaUsuariosPage extends ConsumerWidget {
   const ListaUsuariosPage({super.key});
 
@@ -32,7 +29,7 @@ class ListaUsuariosPage extends ConsumerWidget {
       aoCriarNovo: () => context.go(RotasUsuarios.novo),
       filtros: FiltrosDeCadastro(
         dica: 'Buscar por nome ou e-mail',
-        termos: _termos,
+        termos: termosDoUsuario,
         filtro: ref.watch(filtroUsuariosProvider),
         aoBuscar: filtro.buscar,
         aoFiltrarPorSituacao: filtro.filtrarPorSituacao,
@@ -64,7 +61,7 @@ class _LinhaUsuario extends ConsumerWidget {
     return LinhaDeCadastro(
       titulo: usuario.nome,
       detalhes: [usuario.email, usuario.cargo ?? ''],
-      situacao: IndicadorDeSituacao(situacao: usuario.situacao, termos: _termos),
+      situacao: IndicadorDeSituacao(situacao: usuario.situacao, termos: termosDoUsuario),
       aoTocar: () => context.go(RotasUsuarios.edicao(usuario.id)),
       menu: MenuDeCadastro(
         nome: usuario.nome,
@@ -74,7 +71,7 @@ class _LinhaUsuario extends ConsumerWidget {
           context,
           nome: usuario.nome,
           atual: usuario.situacao,
-          termos: _termos,
+          termos: termosDoUsuario,
           consequenciaDaInativacao:
               'O usuário continuará disponível para consulta, mas não poderá ser responsável por novas obrigações.',
           alterar: (nova) => cadastro.alterarSituacao(usuario, nova),

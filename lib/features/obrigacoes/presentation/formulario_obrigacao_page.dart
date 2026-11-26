@@ -17,6 +17,7 @@ import '../../../core/widgets/campo_do_formulario.dart';
 import '../../../core/widgets/envio_de_formulario.dart';
 import '../../../core/widgets/estrutura_formulario.dart';
 import '../../../core/widgets/icone.dart';
+import '../../../core/widgets/opcao.dart';
 import '../../../core/widgets/registro_com_carregamento.dart';
 import '../../../core/widgets/secao_do_formulario.dart';
 import '../domain/obrigacao.dart';
@@ -43,15 +44,16 @@ class FormularioObrigacaoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void voltar() => context.go(id == null ? RotasObrigacoes.lista : RotasObrigacoes.detalhe(id!));
+    final retorno = (rotulo: id == null ? 'Obrigações' : 'Obrigação', aoVoltar: voltar);
     return RegistroComCarregamento<DadosDoFormularioDeObrigacao>(
       titulo: _titulo,
       registro: ref.watch(formularioDeObrigacaoProvider(id)),
       aoTentarNovamente: () => _recarregar(ref),
-      aoVoltar: voltar,
+      retorno: retorno,
       builder: (dados) => dados.obrigacao?.concluida ?? false
           ? MolduraDoRegistro(
               titulo: _titulo,
-              aoVoltar: voltar,
+              retorno: retorno,
               child: AvisoDeEstado(
                 icone: Icones.statusConcluida,
                 titulo: 'Obrigação concluída',
@@ -99,7 +101,7 @@ class _FormularioObrigacaoState extends ConsumerState<_FormularioObrigacao> with
       ? 'Mostrando ${pagina.itens.length} de ${pagina.totalItens} $cadastros, em ordem alfabética.'
       : null;
 
-  List<OpcaoDeSelecao<int>> get _empresas {
+  List<Opcao<int>> get _empresas {
     final atual = _obrigacao?.empresa;
     final ativas = widget.dados.empresas.itens;
     return [
@@ -109,7 +111,7 @@ class _FormularioObrigacaoState extends ConsumerState<_FormularioObrigacao> with
     ];
   }
 
-  List<OpcaoDeSelecao<int>> get _responsaveis {
+  List<Opcao<int>> get _responsaveis {
     final atual = _obrigacao?.responsavel;
     final ativos = widget.dados.usuarios.itens;
     return [
@@ -167,7 +169,10 @@ class _FormularioObrigacaoState extends ConsumerState<_FormularioObrigacao> with
     return EstruturaFormulario(
       titulo: obrigacao == null ? 'Nova obrigação' : 'Editar obrigação',
       subtitulo: obrigacao == null ? 'Registre um prazo de uma empresa cliente' : obrigacao.titulo,
-      aoVoltar: () => context.go(obrigacao == null ? RotasObrigacoes.lista : RotasObrigacoes.detalhe(obrigacao.id)),
+      retorno: (
+        rotulo: obrigacao == null ? 'Obrigações' : 'Obrigação',
+        aoVoltar: () => context.go(obrigacao == null ? RotasObrigacoes.lista : RotasObrigacoes.detalhe(obrigacao.id)),
+      ),
       chave: chaveFormulario,
       salvando: salvando,
       aoSalvar: _salvar,

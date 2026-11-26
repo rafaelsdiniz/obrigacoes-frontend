@@ -12,6 +12,7 @@ import '../domain/historico_de_status.dart';
 import '../domain/obrigacao.dart';
 import '../domain/resumo_obrigacoes.dart';
 import '../domain/status_obrigacao.dart';
+import '../domain/tipo_obrigacao.dart';
 
 final filtroObrigacoesProvider = NotifierProvider<FiltroObrigacoesNotifier, FiltroObrigacoes>(
   FiltroObrigacoesNotifier.new,
@@ -35,9 +36,22 @@ final resumoDasObrigacoesProvider = FutureProvider.autoDispose<ResumoObrigacoes>
   (ref) => ref.watch(obrigacaoRepositoryProvider).resumir(),
 );
 
+final resumoDaListaProvider = FutureProvider.autoDispose<ResumoObrigacoes>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  final (empresaId, responsavelId) = ref.watch(
+    filtroObrigacoesProvider.select((filtro) => (filtro.empresaId, filtro.responsavelId)),
+  );
+  return ref.watch(obrigacaoRepositoryProvider).resumir(empresaId: empresaId, responsavelId: responsavelId);
+});
+
 final proximosVencimentosProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>((ref) {
   ref.watch(alteracoesDeCadastroProvider);
   return ref.watch(obrigacaoRepositoryProvider).proximosVencimentos();
+});
+
+final obrigacoesAtrasadasProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(obrigacaoRepositoryProvider).listar(const FiltroObrigacoes(somenteAtrasadas: true));
 });
 
 final empresasAtivasProvider = FutureProvider.autoDispose<Pagina<Empresa>>((ref) {
@@ -48,6 +62,16 @@ final empresasAtivasProvider = FutureProvider.autoDispose<Pagina<Empresa>>((ref)
 final usuariosAtivosProvider = FutureProvider.autoDispose<Pagina<Usuario>>((ref) {
   ref.watch(alteracoesDeCadastroProvider);
   return ref.watch(usuarioRepositoryProvider).listarAtivos();
+});
+
+final empresasDosFiltrosProvider = FutureProvider.autoDispose<Pagina<Empresa>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(empresaRepositoryProvider).listarTodas();
+});
+
+final usuariosDosFiltrosProvider = FutureProvider.autoDispose<Pagina<Usuario>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(usuarioRepositoryProvider).listarTodos();
 });
 
 typedef DadosDoFormularioDeObrigacao = ({Obrigacao? obrigacao, Pagina<Empresa> empresas, Pagina<Usuario> usuarios});
@@ -83,6 +107,18 @@ class FiltroObrigacoesNotifier extends Notifier<FiltroObrigacoes> {
     status: ativo && state.status.contains(StatusObrigacao.concluida) ? const {} : null,
   );
 
+  void filtrarPorTipo(TipoObrigacao? tipo) => state = state.alterar(tipo: () => tipo);
+
+  void filtrarPorEmpresa(int? empresaId) => state = state.alterar(empresaId: () => empresaId);
+
+  void filtrarPorResponsavel(int? responsavelId) => state = state.alterar(responsavelId: () => responsavelId);
+
+  void filtrarPorPeriodo(PeriodoDeVencimento? periodo) => state = state.alterar(periodo: () => periodo);
+
+  void ordenarPor(OrdemDasObrigacoes ordem) => state = state.alterar(ordem: ordem);
+
+  void limparFiltrosAdicionais() => state = state.semFiltrosAdicionais();
+
   void exibir({StatusObrigacao? status, bool somenteAtrasadas = false}) =>
       state = FiltroObrigacoes(status: {?status}, somenteAtrasadas: somenteAtrasadas);
 
@@ -109,7 +145,9 @@ class CadastroDeObrigacoes {
     _ref
       ..invalidate(paginaObrigacoesProvider)
       ..invalidate(resumoDasObrigacoesProvider)
+      ..invalidate(resumoDaListaProvider)
       ..invalidate(proximosVencimentosProvider)
+      ..invalidate(obrigacoesAtrasadasProvider)
       ..invalidate(obrigacaoProvider(obrigacao.id))
       ..invalidate(historicoDaObrigacaoProvider(obrigacao.id));
     return obrigacao;

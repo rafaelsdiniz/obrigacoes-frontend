@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import '../layout/medidas.dart';
+import '../tema/tema.dart';
 import 'cabecalho_de_pagina.dart';
 import 'conteudo_centralizado.dart';
 import 'grupo.dart';
 import 'icone.dart';
+import 'progresso_no_botao.dart';
 import 'secao_do_formulario.dart';
+import 'trilha.dart';
 
 class EstruturaFormulario extends StatelessWidget {
   const EstruturaFormulario({
@@ -17,7 +20,7 @@ class EstruturaFormulario extends StatelessWidget {
     required this.secoes,
     required this.salvando,
     required this.aoSalvar,
-    required this.aoVoltar,
+    required this.retorno,
     super.key,
   });
 
@@ -27,15 +30,14 @@ class EstruturaFormulario extends StatelessWidget {
   final List<SecaoDoFormulario> secoes;
   final bool salvando;
   final Future<void> Function() aoSalvar;
-  final VoidCallback aoVoltar;
+  final Retorno retorno;
 
   @override
   Widget build(BuildContext context) {
     final estreita = Medidas.telaEstreita(context);
     return ConteudoCentralizado(
-      larguraMaxima: Medidas.larguraMaximaDoFormulario,
       children: [
-        CabecalhoDePagina(titulo: titulo, subtitulo: subtitulo, aoVoltar: aoVoltar),
+        CabecalhoDePagina(titulo: titulo, subtitulo: subtitulo, retorno: retorno),
         const SizedBox(height: 28),
         Form(
           key: chave,
@@ -51,7 +53,12 @@ class EstruturaFormulario extends StatelessWidget {
                 const Divider(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: estreita ? 20 : 32, vertical: 16),
-                  child: _Acoes(salvando: salvando, aoSalvar: aoSalvar, aoCancelar: aoVoltar, empilhadas: estreita),
+                  child: _Acoes(
+                    salvando: salvando,
+                    aoSalvar: aoSalvar,
+                    aoCancelar: retorno.aoVoltar,
+                    empilhadas: estreita,
+                  ),
                 ),
               ],
             ),
@@ -75,8 +82,8 @@ class _Acoes extends StatelessWidget {
     final salvar = FilledButton.icon(
       onPressed: () => unawaited(aoSalvar()),
       icon: salvando
-          ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-          : const Icone(Icones.salvar, tamanho: 18),
+          ? ProgressoNoBotao(cor: context.cores.sobrePrimaria)
+          : const Icone(Icones.salvar, tamanho: TamanhosDeIcone.padrao),
       label: Text(salvando ? 'Salvando…' : 'Salvar'),
     );
     final cancelar = TextButton(onPressed: aoCancelar, child: const Text('Cancelar'));

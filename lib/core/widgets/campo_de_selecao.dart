@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../tema/tema.dart';
 import 'campo_rotulado.dart';
-
-typedef OpcaoDeSelecao<T> = ({T valor, String rotulo});
+import 'opcao.dart';
 
 class CampoDeSelecao<T> extends StatelessWidget {
   const CampoDeSelecao({
@@ -18,7 +18,7 @@ class CampoDeSelecao<T> extends StatelessWidget {
   });
 
   final String rotulo;
-  final List<OpcaoDeSelecao<T>> opcoes;
+  final List<Opcao<T>> opcoes;
   final T? valor;
   final ValueChanged<T?> aoSelecionar;
   final bool obrigatorio;
@@ -35,7 +35,7 @@ class CampoDeSelecao<T> extends StatelessWidget {
       isExpanded: true,
       decoration: InputDecoration(helperText: ajuda, helperMaxLines: 2),
       hint: dica == null ? null : Text(dica!, style: Theme.of(context).inputDecorationTheme.hintStyle),
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      borderRadius: Raios.cartao,
       items: [
         for (final opcao in opcoes)
           DropdownMenuItem(

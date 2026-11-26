@@ -16,8 +16,15 @@ class BotaoDeAcao extends StatelessWidget {
       ? IconButton.filled(
           tooltip: rotulo,
           onPressed: aoPressionar,
-          style: IconButton.styleFrom(backgroundColor: Cores.grafite, foregroundColor: Colors.white),
+          style: IconButton.styleFrom(
+            backgroundColor: context.cores.primaria,
+            foregroundColor: context.cores.sobrePrimaria,
+          ),
           icon: Icone(icone),
         )
-      : FilledButton.icon(onPressed: aoPressionar, icon: Icone(icone, tamanho: 18), label: Text(rotulo));
+      : FilledButton.icon(
+          onPressed: aoPressionar,
+          icon: Icone(icone, tamanho: TamanhosDeIcone.padrao),
+          label: Text(rotulo),
+        );
 }

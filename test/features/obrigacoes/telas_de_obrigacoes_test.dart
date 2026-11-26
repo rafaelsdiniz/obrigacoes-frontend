@@ -155,6 +155,8 @@ void main() {
       when(() => falsos.obrigacoes.historico(any())).thenAnswer(
         (_) async => [TransicaoDeStatus(statusNovo: StatusObrigacao.pendente, alteradoEm: DateTime.utc(2026, 11, 20))],
       );
+      await tester.ensureVisible(find.text('Tentar novamente'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Tentar novamente'));
       await tester.pumpAndSettle();
 

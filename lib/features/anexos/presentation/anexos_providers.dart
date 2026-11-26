@@ -5,6 +5,7 @@ import '../../../core/formatacao/tamanhos.dart';
 import '../../../core/http/erro_api.dart';
 import '../data/anexo_repository.dart';
 import '../domain/anexo.dart';
+import '../domain/tipo_de_anexo.dart';
 
 final anexosDaObrigacaoProvider = FutureProvider.autoDispose.family<List<Anexo>, int>(
   (ref, obrigacaoId) => ref.watch(anexoRepositoryProvider).listar(obrigacaoId),
@@ -20,6 +21,7 @@ class GestaoDeAnexos {
   AnexoRepository get _repositorio => _ref.read(anexoRepositoryProvider);
 
   Future<void> enviar(int obrigacaoId, ArquivoEscolhido arquivo) async {
+    _garantirTipoPermitido(arquivo.nome);
     _garantirTamanhoPermitido(arquivo.tamanho);
     final bytes = await arquivo.ler();
     _garantirTamanhoPermitido(bytes.length);
@@ -44,6 +46,17 @@ class GestaoDeAnexos {
         .baixar(_repositorio.enderecoDoArquivo(obrigacaoId, anexo.id));
     if (!iniciado) {
       throw const ErroApi(codigo: CodigoErro.desconhecido, mensagem: 'Não foi possível baixar o arquivo.');
+    }
+  }
+
+  static void _garantirTipoPermitido(String nome) {
+    final ponto = nome.lastIndexOf('.');
+    final extensao = ponto < 0 ? '' : nome.substring(ponto + 1).toLowerCase();
+    if (!TipoDeAnexo.extensoesPermitidas.contains(extensao)) {
+      throw ErroApi(
+        codigo: CodigoErro.arquivoInvalido,
+        mensagem: '"$nome" não é aceito. Envie ${TipoDeAnexo.descricaoDosAceitos}.',
+      );
     }
   }
 

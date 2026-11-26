@@ -31,7 +31,7 @@ class LinhaDeCadastro extends StatelessWidget {
         final emColunas = restricoes.maxWidth >= Medidas.larguraParaColunas;
         return InkWell(
           onTap: aoTocar,
-          hoverColor: Cores.sobreposicao,
+          hoverColor: context.cores.realce,
           child: Padding(
             padding: EdgeInsets.fromLTRB(margemHorizontal, emColunas ? 16 : 14, 8, emColunas ? 16 : 14),
             child: Row(

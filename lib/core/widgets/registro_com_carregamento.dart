@@ -8,13 +8,14 @@ import 'cabecalho_de_pagina.dart';
 import 'estado_carregando.dart';
 import 'estado_erro.dart';
 import 'icone.dart';
+import 'trilha.dart';
 
 class RegistroComCarregamento<T> extends StatelessWidget {
   const RegistroComCarregamento({
     required this.titulo,
     required this.registro,
     required this.aoTentarNovamente,
-    required this.aoVoltar,
+    required this.retorno,
     required this.builder,
     super.key,
   });
@@ -22,22 +23,22 @@ class RegistroComCarregamento<T> extends StatelessWidget {
   final String titulo;
   final AsyncValue<T> registro;
   final VoidCallback aoTentarNovamente;
-  final VoidCallback aoVoltar;
+  final Retorno retorno;
   final Widget Function(T registro) builder;
 
   @override
   Widget build(BuildContext context) => registro.when(
     data: builder,
-    loading: () => MolduraDoRegistro(titulo: titulo, aoVoltar: aoVoltar, child: const EstadoCarregando()),
+    loading: () => MolduraDoRegistro(titulo: titulo, retorno: retorno, child: const EstadoCarregando()),
     error: (erro, _) => MolduraDoRegistro(
       titulo: titulo,
-      aoVoltar: aoVoltar,
+      retorno: retorno,
       child: erro is ErroApi && erro.codigo == CodigoErro.recursoNaoEncontrado
           ? AvisoDeEstado(
               icone: Icones.naoEncontrado,
               titulo: 'Registro não encontrado',
               mensagem: erro.mensagem,
-              acao: FilledButton(onPressed: aoVoltar, child: const Text('Voltar')),
+              acao: FilledButton(onPressed: retorno.aoVoltar, child: const Text('Voltar')),
             )
           : EstadoErro(erro: erro, aoTentarNovamente: aoTentarNovamente),
     ),
@@ -45,10 +46,10 @@ class RegistroComCarregamento<T> extends StatelessWidget {
 }
 
 class MolduraDoRegistro extends StatelessWidget {
-  const MolduraDoRegistro({required this.titulo, required this.aoVoltar, required this.child, super.key});
+  const MolduraDoRegistro({required this.titulo, required this.retorno, required this.child, super.key});
 
   final String titulo;
-  final VoidCallback aoVoltar;
+  final Retorno retorno;
   final Widget child;
 
   @override
@@ -58,7 +59,7 @@ class MolduraDoRegistro extends StatelessWidget {
         padding: Medidas.margemDaPagina(context),
         child: Column(
           children: [
-            CabecalhoDePagina(titulo: titulo, aoVoltar: aoVoltar),
+            CabecalhoDePagina(titulo: titulo, retorno: retorno),
             Expanded(child: child),
           ],
         ),

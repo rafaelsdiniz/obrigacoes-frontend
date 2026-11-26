@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 typedef ArquivoEscolhido = ({String nome, int? tamanho, Future<Uint8List> Function() ler});
+
+ArquivoEscolhido arquivoSolto(XFile arquivo) => (nome: arquivo.name, tamanho: null, ler: arquivo.readAsBytes);
 
 final arquivosDoDispositivoProvider = Provider((ref) => const ArquivosDoDispositivo());
 

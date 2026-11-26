@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../dominio/filtro_cadastro.dart';
 import '../dominio/situacao.dart';
 import '../dominio/termos_do_cadastro.dart';
+import '../layout/medidas.dart';
 import 'campo_busca.dart';
 import 'controle_segmentado.dart';
 
@@ -16,9 +17,6 @@ class FiltrosDeCadastro extends StatelessWidget {
     super.key,
   });
 
-  static const _larguraDaBusca = 420.0;
-  static const _larguraParaBuscaAoLadoDoFiltro = 680.0;
-
   final String dica;
   final TermosDoCadastro termos;
   final FiltroCadastro filtro;
@@ -28,12 +26,12 @@ class FiltrosDeCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, restricoes) => Wrap(
-      spacing: 16,
-      runSpacing: 12,
+      spacing: Medidas.espacoEntreControles,
+      runSpacing: Medidas.espacoEntreControles,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         SizedBox(
-          width: restricoes.maxWidth < _larguraParaBuscaAoLadoDoFiltro ? restricoes.maxWidth : _larguraDaBusca,
+          width: Medidas.larguraDaBusca(restricoes.maxWidth),
           child: CampoBusca(dica: dica, valorInicial: filtro.busca, aoBuscar: aoBuscar),
         ),
         ControleSegmentado<Situacao?>(

@@ -31,7 +31,7 @@ class FormularioUsuarioPage extends ConsumerWidget {
       titulo: 'Editar usuário',
       registro: ref.watch(usuarioProvider(id)),
       aoTentarNovamente: () => ref.invalidate(usuarioProvider(id)),
-      aoVoltar: () => context.go(RotasUsuarios.lista),
+      retorno: (rotulo: 'Usuários', aoVoltar: () => context.go(RotasUsuarios.lista)),
       builder: (usuario) => _FormularioUsuario(key: ValueKey(usuario.versao), usuario: usuario),
     );
   }
@@ -77,7 +77,7 @@ class _FormularioUsuarioState extends ConsumerState<_FormularioUsuario> with Env
   Widget build(BuildContext context) => EstruturaFormulario(
     titulo: widget.usuario == null ? 'Novo usuário' : 'Editar usuário',
     subtitulo: widget.usuario == null ? 'Cadastre um colaborador do escritório' : 'Atualize os dados do colaborador',
-    aoVoltar: () => context.go(RotasUsuarios.lista),
+    retorno: (rotulo: 'Usuários', aoVoltar: () => context.go(RotasUsuarios.lista)),
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,
