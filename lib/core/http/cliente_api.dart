@@ -26,6 +26,15 @@ class ClienteApi {
   Future<Json> get(String caminho, {Map<String, Object?> parametros = const {}}) =>
       _executar(() => _dio.get<Json>(caminho, queryParameters: _semVazios(parametros)));
 
+  Future<List<Json>> getLista(String caminho) async {
+    try {
+      final resposta = await _dio.get<List<dynamic>>(caminho);
+      return (resposta.data ?? const []).cast<Json>();
+    } on DioException catch (erro) {
+      throw ErroApi.de(erro);
+    }
+  }
+
   Future<Json> post(String caminho, {Object? corpo}) => _executar(() => _dio.post<Json>(caminho, data: corpo));
 
   Future<Json> put(String caminho, Json corpo) => _executar(() => _dio.put<Json>(caminho, data: corpo));
@@ -43,6 +52,6 @@ class ClienteApi {
 
   static Map<String, Object> _semVazios(Map<String, Object?> parametros) => {
     for (final MapEntry(:key, :value) in parametros.entries)
-      if (value != null && value != '') key: value,
+      if (value != null && value != '' && !(value is List && value.isEmpty)) key: value,
   };
 }
