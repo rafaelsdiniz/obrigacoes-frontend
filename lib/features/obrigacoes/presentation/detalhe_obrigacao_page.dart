@@ -64,6 +64,7 @@ class _DetalheState extends ConsumerState<_Detalhe> {
       }
       setState(() => _avancando = true);
       await ref.read(cadastroDeObrigacoesProvider).avancarStatus(widget.obrigacao, proximo);
+      await ref.read(obrigacaoProvider(widget.obrigacao.id).future);
       if (mounted) {
         avisarSucesso(context, 'Obrigação ${proximo == StatusObrigacao.concluida ? 'concluída' : 'iniciada'}.');
       }

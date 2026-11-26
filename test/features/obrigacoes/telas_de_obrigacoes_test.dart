@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -82,6 +84,29 @@ void main() {
 
       verify(() => falsos.obrigacoes.avancarStatus(any(), StatusObrigacao.emAndamento)).called(1);
       expect(find.text('Obrigação iniciada.'), findsOneWidget);
+    });
+
+    testWidgets('não envia o avanço duas vezes enquanto a obrigação recarrega', (tester) async {
+      final falsos = repositoriosComDados();
+      final recarga = Completer<Obrigacao>();
+      var buscas = 0;
+      when(() => falsos.obrigacoes.buscar(10)).thenAnswer((_) {
+        buscas++;
+        return buscas == 1 ? Future.value(obrigacaoDeExemplo()) : recarga.future;
+      });
+      when(() => falsos.obrigacoes.avancarStatus(any(), any()))
+          .thenAnswer((_) async => obrigacaoDeExemplo(status: StatusObrigacao.emAndamento));
+      await abrirEm(tester, '/obrigacoes/10', repositorios: falsos);
+
+      await tester.tap(find.text('Iniciar obrigação'));
+      await tester.pump();
+      await tester.pump();
+      await tester.tap(find.text('Iniciar obrigação'), warnIfMissed: false);
+      await tester.pump();
+      recarga.complete(obrigacaoDeExemplo(status: StatusObrigacao.emAndamento));
+      await tester.pumpAndSettle();
+
+      verify(() => falsos.obrigacoes.avancarStatus(any(), StatusObrigacao.emAndamento)).called(1);
     });
 
     testWidgets('pede confirmação antes de concluir', (tester) async {
