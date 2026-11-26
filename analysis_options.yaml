@@ -5,10 +5,9 @@ analyzer:
     - build/**
     - android/**
     - web/**
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
   language:
     strict-casts: true
+    strict-inference: true
     strict-raw-types: true
 
 linter:
@@ -16,6 +15,7 @@ linter:
     - always_declare_return_types
     - avoid_print
     - cancel_subscriptions
+    - discarded_futures
     - directives_ordering
     - prefer_const_constructors
     - prefer_const_declarations
@@ -26,3 +26,6 @@ linter:
     - sort_child_properties_last
     - unawaited_futures
     - use_super_parameters
+
+formatter:
+  page_width: 120
