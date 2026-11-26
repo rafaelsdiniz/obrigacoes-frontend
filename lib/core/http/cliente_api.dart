@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,6 +39,21 @@ class ClienteApi {
 
   Future<Json> patch(String caminho, {Json? corpo}) async =>
       await _executar(() => _dio.patch<Json>(caminho, data: corpo)) ?? const {};
+
+  Future<Json> enviarArquivo(
+    String caminho, {
+    required String campo,
+    required String nome,
+    required Uint8List bytes,
+  }) async =>
+      await _executar(
+        () => _dio.post<Json>(caminho, data: FormData.fromMap({campo: MultipartFile.fromBytes(bytes, filename: nome)})),
+      ) ??
+      const {};
+
+  Future<void> delete(String caminho) => _executar(() => _dio.delete<void>(caminho));
+
+  Uri endereco(String caminho) => Uri.parse(_dio.options.baseUrl).resolve(caminho);
 
   Future<T?> _executar<T>(Future<Response<T>> Function() requisicao) async {
     try {

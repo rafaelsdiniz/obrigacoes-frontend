@@ -15,6 +15,7 @@ import '../../../core/widgets/conteudo_centralizado.dart';
 import '../../../core/widgets/grupo.dart';
 import '../../../core/widgets/icone.dart';
 import '../../../core/widgets/registro_com_carregamento.dart';
+import '../../anexos/presentation/anexos_da_obrigacao.dart';
 import '../domain/obrigacao.dart';
 import '../domain/prazo.dart';
 import '../domain/status_obrigacao.dart';
@@ -130,16 +131,23 @@ class _DetalheState extends ConsumerState<_Detalhe> {
           builder: (context, restricoes) {
             final dados = _DadosDaObrigacao(obrigacao);
             final andamento = AndamentoDaObrigacao(obrigacao);
+            final anexos = AnexosDaObrigacao(obrigacaoId: obrigacao.id, permiteExcluir: !obrigacao.concluida);
             if (restricoes.maxWidth < Medidas.larguraParaColunas) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [dados, const SizedBox(height: 20), andamento],
+                children: [dados, const SizedBox(height: 20), andamento, const SizedBox(height: 20), anexos],
               );
             }
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 3, child: dados),
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [dados, const SizedBox(height: 24), anexos],
+                  ),
+                ),
                 const SizedBox(width: 24),
                 Expanded(flex: 2, child: andamento),
               ],
