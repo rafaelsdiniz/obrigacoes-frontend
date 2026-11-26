@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/dominio/filtro_cadastro.dart';
 import '../../../core/dominio/situacao.dart';
+import '../../../core/estado/alteracoes_de_cadastro.dart';
 import '../../../core/estado/filtro_cadastro_notifier.dart';
 import '../../../core/http/pagina.dart';
 import '../data/usuario_repository.dart';
@@ -37,5 +38,6 @@ class CadastroDeUsuarios {
   Future<void> _atualizandoLista(Future<Usuario> Function() operacao) async {
     await operacao();
     _ref.invalidate(paginaUsuariosProvider);
+    _ref.read(alteracoesDeCadastroProvider.notifier).registrar();
   }
 }

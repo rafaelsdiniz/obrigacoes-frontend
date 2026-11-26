@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/estado/alteracoes_de_cadastro.dart';
 import '../../../core/http/pagina.dart';
 import '../../empresas/data/empresa_repository.dart';
 import '../../empresas/domain/empresa.dart';
@@ -16,13 +17,15 @@ final filtroObrigacoesProvider = NotifierProvider<FiltroObrigacoesNotifier, Filt
   FiltroObrigacoesNotifier.new,
 );
 
-final paginaObrigacoesProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>(
-  (ref) => ref.watch(obrigacaoRepositoryProvider).listar(ref.watch(filtroObrigacoesProvider)),
-);
+final paginaObrigacoesProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(obrigacaoRepositoryProvider).listar(ref.watch(filtroObrigacoesProvider));
+});
 
-final obrigacaoProvider = FutureProvider.autoDispose.family<Obrigacao, int>(
-  (ref, id) => ref.watch(obrigacaoRepositoryProvider).buscar(id),
-);
+final obrigacaoProvider = FutureProvider.autoDispose.family<Obrigacao, int>((ref, id) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(obrigacaoRepositoryProvider).buscar(id);
+});
 
 final historicoDaObrigacaoProvider = FutureProvider.autoDispose.family<List<TransicaoDeStatus>, int>(
   (ref, id) => ref.watch(obrigacaoRepositoryProvider).historico(id),
@@ -32,17 +35,20 @@ final resumoDasObrigacoesProvider = FutureProvider.autoDispose<ResumoObrigacoes>
   (ref) => ref.watch(obrigacaoRepositoryProvider).resumir(),
 );
 
-final proximosVencimentosProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>(
-  (ref) => ref.watch(obrigacaoRepositoryProvider).proximosVencimentos(),
-);
+final proximosVencimentosProvider = FutureProvider.autoDispose<Pagina<Obrigacao>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(obrigacaoRepositoryProvider).proximosVencimentos();
+});
 
-final empresasAtivasProvider = FutureProvider.autoDispose<Pagina<Empresa>>(
-  (ref) => ref.watch(empresaRepositoryProvider).listarAtivas(),
-);
+final empresasAtivasProvider = FutureProvider.autoDispose<Pagina<Empresa>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(empresaRepositoryProvider).listarAtivas();
+});
 
-final usuariosAtivosProvider = FutureProvider.autoDispose<Pagina<Usuario>>(
-  (ref) => ref.watch(usuarioRepositoryProvider).listarAtivos(),
-);
+final usuariosAtivosProvider = FutureProvider.autoDispose<Pagina<Usuario>>((ref) {
+  ref.watch(alteracoesDeCadastroProvider);
+  return ref.watch(usuarioRepositoryProvider).listarAtivos();
+});
 
 typedef DadosDoFormularioDeObrigacao = ({Obrigacao? obrigacao, Pagina<Empresa> empresas, Pagina<Usuario> usuarios});
 

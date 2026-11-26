@@ -27,6 +27,7 @@ class PaginaDeListagem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ConteudoCentralizado(
+    larguraMaxima: Medidas.larguraMaximaDaListagem,
     children: [
       if (!Medidas.telaLarga(context)) ...[const Marca(altura: 28), const SizedBox(height: 20)],
       CabecalhoDePagina(

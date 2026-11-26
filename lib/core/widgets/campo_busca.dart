@@ -23,6 +23,15 @@ class _CampoBuscaState extends State<CampoBusca> {
   Timer? _espera;
 
   @override
+  void didUpdateWidget(CampoBusca anterior) {
+    super.didUpdateWidget(anterior);
+    if (widget.valorInicial != anterior.valorInicial && widget.valorInicial != _controlador.text) {
+      _espera?.cancel();
+      _controlador.text = widget.valorInicial;
+    }
+  }
+
+  @override
   void dispose() {
     _espera?.cancel();
     _controlador.dispose();

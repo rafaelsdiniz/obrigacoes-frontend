@@ -88,6 +88,8 @@ Na web, o aplicativo lê o arquivo `/config.json` da raiz do site antes de inici
 
 Se o arquivo não existir, vale o `API_URL` definido no build. Assim, a mesma build serve qualquer ambiente. Fora da web, sem `API_URL`, o padrão é `http://localhost:8080`, ou `http://10.0.2.2:8080` no emulador Android.
 
+No Android, HTTP sem TLS só é permitido para `10.0.2.2` e `localhost` (`android/app/src/main/res/xml/network_security_config.xml`). Em um aparelho físico, use a API por HTTPS ou inclua o endereço da máquina nesse arquivo antes de gerar o app.
+
 | Onde | Variável | Padrão | Descrição |
 |---|---|---|---|
 | Contêiner (nginx) | `API_URL` | `http://localhost:8080` | Endereço da API como o navegador o enxerga; vira o `/config.json` na subida do contêiner |

@@ -7,6 +7,7 @@ abstract final class Medidas {
   static const larguraParaRotulosNosBotoes = 600.0;
   static const larguraParaMargemAmpla = 1280.0;
   static const larguraMaximaDoConteudo = 1200.0;
+  static const larguraMaximaDaListagem = 1600.0;
   static const larguraMaximaDoFormulario = 960.0;
 
   static const _margemAmpla = 56.0;
