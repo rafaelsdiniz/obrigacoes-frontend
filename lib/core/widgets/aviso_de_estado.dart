@@ -1,11 +1,12 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../tema/tema.dart';
+import 'icone.dart';
 
 class AvisoDeEstado extends StatelessWidget {
   const AvisoDeEstado({required this.icone, required this.titulo, required this.mensagem, this.acao, super.key});
 
-  final IconData icone;
+  final Icones icone;
   final String titulo;
   final String mensagem;
   final Widget? acao;
@@ -21,7 +22,10 @@ class AvisoDeEstado extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: const BoxDecoration(color: Cores.fundo, shape: BoxShape.circle),
-              child: SizedBox.square(dimension: 72, child: Icon(icone, size: 32, color: Cores.textoSecundario)),
+              child: SizedBox.square(
+                dimension: 72,
+                child: Center(child: Icone(icone, tamanho: 30, cor: Cores.textoSecundario)),
+              ),
             ),
             const SizedBox(height: 20),
             Text(titulo, style: tema.titleMedium, textAlign: TextAlign.center),

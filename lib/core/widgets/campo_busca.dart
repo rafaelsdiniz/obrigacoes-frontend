@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../tema/tema.dart';
+import 'icone.dart';
+
 class CampoBusca extends StatefulWidget {
   const CampoBusca({required this.dica, required this.aoBuscar, this.valorInicial = '', super.key});
 
@@ -45,13 +48,23 @@ class _CampoBuscaState extends State<CampoBusca> {
     decoration: InputDecoration(
       hintText: widget.dica,
       isDense: true,
+      fillColor: Cores.preenchimento,
+      enabledBorder: const OutlineInputBorder(borderRadius: Raios.pequeno, borderSide: BorderSide.none),
       contentPadding: const EdgeInsets.symmetric(vertical: 12),
-      prefixIcon: const Icon(Icons.search_rounded, size: 20),
+      prefixIcon: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Icone(Icones.buscar, tamanho: 19, cor: Cores.textoSecundario),
+      ),
+      prefixIconConstraints: const BoxConstraints(minWidth: 44),
       suffixIcon: ListenableBuilder(
         listenable: _controlador,
         builder: (context, _) => _controlador.text.isEmpty
             ? const SizedBox.shrink()
-            : IconButton(tooltip: 'Limpar busca', onPressed: _limpar, icon: const Icon(Icons.cancel_rounded, size: 18)),
+            : IconButton(
+                tooltip: 'Limpar busca',
+                onPressed: _limpar,
+                icon: const Icone(Icones.limpar, tamanho: 18, cor: Cores.textoSecundario),
+              ),
       ),
     ),
   );

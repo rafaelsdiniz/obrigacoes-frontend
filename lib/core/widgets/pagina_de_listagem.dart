@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 import '../layout/medidas.dart';
 import 'botao_de_acao.dart';
 import 'cabecalho_de_pagina.dart';
+import 'conteudo_centralizado.dart';
+import 'icone.dart';
 import 'marca.dart';
 
 class PaginaDeListagem extends StatelessWidget {
@@ -24,23 +26,18 @@ class PaginaDeListagem extends StatelessWidget {
   final Widget conteudo;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(
-      child: ListView(
-        padding: Medidas.margemDaPagina(context),
-        children: [
-          if (!Medidas.telaLarga(context)) ...[const Marca(altura: 28), const SizedBox(height: 20)],
-          CabecalhoDePagina(
-            titulo: titulo,
-            subtitulo: subtitulo,
-            acoes: [BotaoDeAcao(rotulo: rotuloNovo, icone: Icons.add_rounded, aoPressionar: aoCriarNovo)],
-          ),
-          const SizedBox(height: 28),
-          filtros,
-          const SizedBox(height: 12),
-          conteudo,
-        ],
+  Widget build(BuildContext context) => ConteudoCentralizado(
+    children: [
+      if (!Medidas.telaLarga(context)) ...[const Marca(altura: 28), const SizedBox(height: 20)],
+      CabecalhoDePagina(
+        titulo: titulo,
+        subtitulo: subtitulo,
+        acoes: [BotaoDeAcao(rotulo: rotuloNovo, icone: Icones.adicionar, aoPressionar: aoCriarNovo)],
       ),
-    ),
+      const SizedBox(height: 28),
+      filtros,
+      const SizedBox(height: 12),
+      conteudo,
+    ],
   );
 }

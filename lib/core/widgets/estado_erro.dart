@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../http/erro_api.dart';
 import 'aviso_de_estado.dart';
+import 'icone.dart';
 
 class EstadoErro extends StatelessWidget {
   const EstadoErro({required this.erro, required this.aoTentarNovamente, super.key});
@@ -11,12 +12,12 @@ class EstadoErro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AvisoDeEstado(
-    icone: Icons.cloud_off_outlined,
+    icone: Icones.semConexao,
     titulo: 'Não foi possível carregar',
     mensagem: ErroApi.mensagemPara(erro),
     acao: FilledButton.icon(
       onPressed: aoTentarNovamente,
-      icon: const Icon(Icons.refresh_rounded, size: 20),
+      icon: const Icone(Icones.recarregar, tamanho: 18),
       label: const Text('Tentar novamente'),
     ),
   );

@@ -5,25 +5,21 @@ import '../tema/tema.dart';
 
 class LinhaDeCadastro extends StatelessWidget {
   const LinhaDeCadastro({
-    required this.avatar,
     required this.titulo,
     required this.detalhes,
-    required this.selo,
+    required this.situacao,
     required this.menu,
     required this.aoTocar,
     super.key,
   });
 
-  static const margemHorizontal = 16.0;
-  static const larguraDoAvatar = 56.0;
-  static const larguraDoSelo = 112.0;
+  static const margemHorizontal = 20.0;
+  static const larguraDaSituacao = 120.0;
   static const larguraDoMenu = 48.0;
-  static const recuoDoSeparador = margemHorizontal + larguraDoAvatar;
 
-  final Widget avatar;
   final String titulo;
   final List<String> detalhes;
-  final Widget selo;
+  final Widget situacao;
   final Widget menu;
   final VoidCallback aoTocar;
 
@@ -37,29 +33,25 @@ class LinhaDeCadastro extends StatelessWidget {
           onTap: aoTocar,
           hoverColor: Cores.sobreposicao,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: margemHorizontal, vertical: 12),
+            padding: EdgeInsets.fromLTRB(margemHorizontal, emColunas ? 16 : 14, 8, emColunas ? 16 : 14),
             child: Row(
               children: [
-                SizedBox(
-                  width: larguraDoAvatar,
-                  child: Align(alignment: Alignment.centerLeft, child: avatar),
-                ),
                 Expanded(
                   flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(titulo, style: tema.titleSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(titulo, style: tema.titleSmall, maxLines: 2, overflow: TextOverflow.ellipsis),
                       if (!emColunas) ...[
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 4),
                         Text(
-                          detalhes.where((detalhe) => detalhe.isNotEmpty).join(' · '),
+                          detalhes.where((detalhe) => detalhe.isNotEmpty).join('  ·  '),
                           style: tema.bodySmall,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
-                        selo,
+                        situacao,
                       ],
                     ],
                   ),
@@ -69,7 +61,7 @@ class LinhaDeCadastro extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 12),
+                        padding: const EdgeInsets.only(right: 16),
                         child: Text(
                           detalhe.isEmpty ? '—' : detalhe,
                           style: Tema.textoSecundario(context),
@@ -79,11 +71,8 @@ class LinhaDeCadastro extends StatelessWidget {
                       ),
                     ),
                   SizedBox(
-                    width: larguraDoSelo,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FittedBox(fit: BoxFit.scaleDown, child: selo),
-                    ),
+                    width: larguraDaSituacao,
+                    child: Align(alignment: Alignment.centerLeft, child: situacao),
                   ),
                 ],
                 SizedBox(width: larguraDoMenu, child: menu),

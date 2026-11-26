@@ -68,7 +68,8 @@ void main() {
 
     await tester.tap(find.text('Nova empresa'));
     await tester.pumpAndSettle();
-    expect(find.text('Razão social *'), findsOneWidget);
+    expect(find.text('Nova empresa'), findsWidgets);
+    expect(find.text('Identificação'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(InkWell, 'Empresas'));
     await tester.pumpAndSettle();

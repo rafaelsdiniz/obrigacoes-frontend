@@ -43,7 +43,7 @@ void main() {
     await abrir(tester);
 
     expect(find.text('Contábil Alfa LTDA'), findsOneWidget);
-    expect(find.text('11.222.333/0001-81 · Alfa · contato@alfa.com.br'), findsOneWidget);
+    expect(find.text('11.222.333/0001-81  ·  Alfa  ·  contato@alfa.com.br'), findsOneWidget);
     expect(find.text('Ativa'), findsOneWidget);
     expect(find.text('Todas'), findsOneWidget);
     expect(find.text('1 registro'), findsOneWidget);

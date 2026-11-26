@@ -7,6 +7,7 @@ import 'aviso_de_estado.dart';
 import 'cabecalho_de_pagina.dart';
 import 'estado_carregando.dart';
 import 'estado_erro.dart';
+import 'icone.dart';
 
 class FormularioComCarregamento<T> extends StatelessWidget {
   const FormularioComCarregamento({
@@ -33,7 +34,7 @@ class FormularioComCarregamento<T> extends StatelessWidget {
       aoVoltar: aoVoltar,
       child: erro is ErroApi && erro.codigo == CodigoErro.recursoNaoEncontrado
           ? AvisoDeEstado(
-              icone: Icons.search_off_rounded,
+              icone: Icones.naoEncontrado,
               titulo: 'Registro não encontrado',
               mensagem: erro.mensagem,
               acao: FilledButton(onPressed: aoVoltar, child: const Text('Voltar')),

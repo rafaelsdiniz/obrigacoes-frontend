@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../dominio/situacao.dart';
+import 'icone.dart';
 
 enum _AcaoDeCadastro { editar, alterarSituacao }
 
@@ -21,7 +22,7 @@ class MenuDeCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PopupMenuButton<_AcaoDeCadastro>(
     tooltip: 'Ações de $nome',
-    icon: const Icon(Icons.more_horiz_rounded),
+    icon: const Icone(Icones.mais, tamanho: 20),
     onSelected: (acao) => switch (acao) {
       _AcaoDeCadastro.editar => aoEditar(),
       _AcaoDeCadastro.alterarSituacao => aoAlterarSituacao(),
