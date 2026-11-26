@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../http/pagina.dart';
+import '../layout/medidas.dart';
 import 'estado_carregando.dart';
 import 'estado_erro.dart';
 import 'estado_vazio.dart';
+import 'grupo.dart';
+import 'linha_de_cadastro.dart';
 
 class ListaPaginada<T> extends StatelessWidget {
   const ListaPaginada({
@@ -15,33 +18,45 @@ class ListaPaginada<T> extends StatelessWidget {
     required this.vazio,
     required this.aoMudarPagina,
     required this.aoTentarNovamente,
+    this.cabecalho,
     super.key,
   });
-
-  static const espacoParaBotaoFlutuante = 88.0;
 
   final AsyncValue<Pagina<T>> estado;
   final Widget Function(BuildContext context, T item) itemBuilder;
   final EstadoVazio vazio;
+  final Widget? cabecalho;
   final ValueChanged<int> aoMudarPagina;
   final VoidCallback aoTentarNovamente;
 
   @override
   Widget build(BuildContext context) => estado.when(
     skipLoadingOnReload: true,
-    loading: () => const EstadoCarregando(),
-    error: (erro, _) => EstadoErro(erro: erro, aoTentarNovamente: aoTentarNovamente),
+    loading: () => const Padding(padding: EdgeInsets.symmetric(vertical: 64), child: EstadoCarregando()),
+    error: (erro, _) => Grupo(
+      child: EstadoErro(erro: erro, aoTentarNovamente: aoTentarNovamente),
+    ),
     data: (pagina) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: 4, child: estado.isLoading ? const LinearProgressIndicator() : null),
-        Expanded(
+        SizedBox(height: 3, child: estado.isLoading ? const LinearProgressIndicator() : null),
+        const SizedBox(height: 8),
+        Grupo(
           child: pagina.vazia
               ? vazio
-              : ListView.separated(
-                  padding: const EdgeInsets.only(top: 4, bottom: espacoParaBotaoFlutuante),
-                  itemCount: pagina.itens.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 8),
-                  itemBuilder: (context, indice) => itemBuilder(context, pagina.itens[indice]),
+              : LayoutBuilder(
+                  builder: (context, restricoes) => Column(
+                    children: [
+                      if (cabecalho case final cabecalho? when restricoes.maxWidth >= Medidas.larguraParaColunas) ...[
+                        cabecalho,
+                        const Divider(),
+                      ],
+                      for (final (indice, item) in pagina.itens.indexed) ...[
+                        if (indice > 0) const Divider(indent: LinhaDeCadastro.recuoDoSeparador),
+                        itemBuilder(context, item),
+                      ],
+                    ],
+                  ),
                 ),
         ),
         if (!pagina.vazia || pagina.temAnterior) _ControlePaginacao(pagina: pagina, aoMudarPagina: aoMudarPagina),
@@ -53,36 +68,46 @@ class ListaPaginada<T> extends StatelessWidget {
 class _ControlePaginacao extends StatelessWidget {
   const _ControlePaginacao({required this.pagina, required this.aoMudarPagina});
 
-  static const _espacoDoBotaoFlutuanteCompacto = 72.0;
+  static const _larguraMaximaDoIndicador = 120.0;
 
   final Pagina<Object?> pagina;
   final ValueChanged<int> aoMudarPagina;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 8, bottom: 8, right: _espacoDoBotaoFlutuanteCompacto),
-    child: Row(
-      children: [
-        IconButton(
-          tooltip: 'Página anterior',
-          onPressed: pagina.temAnterior ? () => aoMudarPagina(pagina.numero - 1) : null,
-          icon: const Icon(Icons.chevron_left),
-        ),
-        Text('${pagina.numero + 1} de ${math.max(pagina.totalPaginas, pagina.numero + 1)}'),
-        IconButton(
-          tooltip: 'Próxima página',
-          onPressed: pagina.temProxima ? () => aoMudarPagina(pagina.numero + 1) : null,
-          icon: const Icon(Icons.chevron_right),
-        ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            pagina.totalItens == 1 ? '1 registro' : '${pagina.totalItens} registros',
-            style: Theme.of(context).textTheme.bodySmall,
-            overflow: TextOverflow.ellipsis,
+  Widget build(BuildContext context) {
+    final tema = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, left: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              pagina.totalItens == 1 ? '1 registro' : '${pagina.totalItens} registros',
+              style: tema.bodySmall,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+          IconButton(
+            tooltip: 'Página anterior',
+            onPressed: pagina.temAnterior ? () => aoMudarPagina(pagina.numero - 1) : null,
+            icon: const Icon(Icons.chevron_left_rounded),
+          ),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _larguraMaximaDoIndicador),
+            child: Text(
+              'Página ${pagina.numero + 1} de ${math.max(pagina.totalPaginas, pagina.numero + 1)}',
+              style: tema.bodySmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          IconButton(
+            tooltip: 'Próxima página',
+            onPressed: pagina.temProxima ? () => aoMudarPagina(pagina.numero + 1) : null,
+            icon: const Icon(Icons.chevron_right_rounded),
+          ),
+        ],
+      ),
+    );
+  }
 }

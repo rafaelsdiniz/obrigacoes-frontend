@@ -1,10 +1,14 @@
 import 'package:material_ui/material_ui.dart';
 
-import 'conteudo_limitado.dart';
+import '../layout/medidas.dart';
+import 'botao_de_acao.dart';
+import 'cabecalho_de_pagina.dart';
+import 'marca.dart';
 
 class PaginaDeListagem extends StatelessWidget {
   const PaginaDeListagem({
     required this.titulo,
+    required this.subtitulo,
     required this.rotuloNovo,
     required this.aoCriarNovo,
     required this.filtros,
@@ -12,9 +16,8 @@ class PaginaDeListagem extends StatelessWidget {
     super.key,
   });
 
-  static const larguraParaBotaoComRotulo = 600.0;
-
   final String titulo;
+  final String subtitulo;
   final String rotuloNovo;
   final VoidCallback aoCriarNovo;
   final Widget filtros;
@@ -22,18 +25,20 @@ class PaginaDeListagem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(titulo)),
-    floatingActionButton: MediaQuery.sizeOf(context).width >= larguraParaBotaoComRotulo
-        ? FloatingActionButton.extended(onPressed: aoCriarNovo, icon: const Icon(Icons.add), label: Text(rotuloNovo))
-        : FloatingActionButton(onPressed: aoCriarNovo, tooltip: rotuloNovo, child: const Icon(Icons.add)),
-    body: ConteudoLimitado(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    body: SafeArea(
+      child: ListView(
+        padding: Medidas.margemDaPagina(context),
         children: [
-          const SizedBox(height: 8),
+          if (!Medidas.telaLarga(context)) ...[const Marca(altura: 28), const SizedBox(height: 20)],
+          CabecalhoDePagina(
+            titulo: titulo,
+            subtitulo: subtitulo,
+            acoes: [BotaoDeAcao(rotulo: rotuloNovo, icone: Icons.add_rounded, aoPressionar: aoCriarNovo)],
+          ),
+          const SizedBox(height: 28),
           filtros,
-          const SizedBox(height: 8),
-          Expanded(child: conteudo),
+          const SizedBox(height: 12),
+          conteudo,
         ],
       ),
     ),

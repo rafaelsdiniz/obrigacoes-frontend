@@ -42,13 +42,14 @@ void main() {
     return ProviderScope.containerOf(tester.element(find.byType(ObrigacoesApp)));
   }
 
-  testWidgets('abre em empresas e navega para usuários pelo menu lateral em telas largas', (tester) async {
+  testWidgets('abre em empresas e navega para usuários pela barra lateral em telas largas', (tester) async {
     await abrir(tester, const Size(1280, 800));
 
-    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.bySemanticsLabel('Player Contabilidade'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
     expect(find.text('Contábil Alfa LTDA'), findsOneWidget);
 
-    await tester.tap(find.text('Usuários'));
+    await tester.tap(find.widgetWithText(InkWell, 'Usuários'));
     await tester.pumpAndSettle();
 
     expect(find.text('Ana Souza'), findsOneWidget);
@@ -58,7 +59,7 @@ void main() {
     await abrir(tester, const Size(400, 800));
 
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.byType(NavigationRail), findsNothing);
+    expect(find.text('GESTÃO'), findsNothing);
     expect(find.byTooltip('Nova empresa'), findsOneWidget);
   });
 
@@ -69,7 +70,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Razão social *'), findsOneWidget);
 
-    await tester.tap(find.descendant(of: find.byType(NavigationRail), matching: find.text('Empresas')));
+    await tester.tap(find.widgetWithText(InkWell, 'Empresas'));
     await tester.pumpAndSettle();
     expect(find.text('Contábil Alfa LTDA'), findsOneWidget);
   });

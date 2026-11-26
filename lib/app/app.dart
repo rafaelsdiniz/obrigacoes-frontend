@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/tema/tema.dart';
 import 'roteador.dart';
-import 'tema.dart';
 
 class ObrigacoesApp extends ConsumerWidget {
   const ObrigacoesApp({super.key});

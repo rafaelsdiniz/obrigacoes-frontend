@@ -83,49 +83,64 @@ class _FormularioEmpresaState extends ConsumerState<_FormularioEmpresa> with Env
   @override
   Widget build(BuildContext context) => EstruturaFormulario(
     titulo: widget.empresa == null ? 'Nova empresa' : 'Editar empresa',
+    subtitulo: widget.empresa == null
+        ? 'Cadastre uma empresa cliente do escritório'
+        : 'Atualize os dados cadastrais da empresa',
+    aoVoltar: () => context.go(RotasEmpresas.lista),
     chave: chaveFormulario,
     salvando: salvando,
     aoSalvar: _salvar,
     campos: [
-      TextFormField(
-        controller: _razaoSocial,
-        decoration: const InputDecoration(labelText: 'Razão social *'),
-        validator: validarCampo('razaoSocial', Validacoes.obrigatorio('A razão social é obrigatória.', maximo: 150)),
-        onChanged: (_) => campoAlterado('razaoSocial'),
-        textInputAction: TextInputAction.next,
+      CampoDoFormulario(
+        TextFormField(
+          controller: _razaoSocial,
+          decoration: const InputDecoration(labelText: 'Razão social *'),
+          validator: validarCampo('razaoSocial', Validacoes.obrigatorio('A razão social é obrigatória.', maximo: 150)),
+          onChanged: (_) => campoAlterado('razaoSocial'),
+          textInputAction: TextInputAction.next,
+        ),
+        larguraInteira: true,
       ),
-      TextFormField(
-        controller: _nomeFantasia,
-        decoration: const InputDecoration(labelText: 'Nome fantasia'),
-        validator: validarCampo('nomeFantasia', Validacoes.tamanhoMaximo(150)),
-        onChanged: (_) => campoAlterado('nomeFantasia'),
-        textInputAction: TextInputAction.next,
+      CampoDoFormulario(
+        TextFormField(
+          controller: _nomeFantasia,
+          decoration: const InputDecoration(labelText: 'Nome fantasia'),
+          validator: validarCampo('nomeFantasia', Validacoes.tamanhoMaximo(150)),
+          onChanged: (_) => campoAlterado('nomeFantasia'),
+          textInputAction: TextInputAction.next,
+        ),
       ),
-      TextFormField(
-        controller: _cnpj,
-        decoration: const InputDecoration(labelText: 'CNPJ *', helperText: 'Numérico ou alfanumérico'),
-        inputFormatters: [MascaraCnpj()],
-        textCapitalization: TextCapitalization.characters,
-        validator: validarCampo('cnpj', Validacoes.cnpj),
-        onChanged: (_) => campoAlterado('cnpj'),
-        textInputAction: TextInputAction.next,
+      CampoDoFormulario(
+        TextFormField(
+          controller: _cnpj,
+          decoration: const InputDecoration(labelText: 'CNPJ *', hintText: 'Numérico ou alfanumérico'),
+          inputFormatters: [MascaraCnpj()],
+          textCapitalization: TextCapitalization.characters,
+          validator: validarCampo('cnpj', Validacoes.cnpj),
+          onChanged: (_) => campoAlterado('cnpj'),
+          textInputAction: TextInputAction.next,
+        ),
       ),
-      TextFormField(
-        controller: _email,
-        decoration: const InputDecoration(labelText: 'E-mail'),
-        keyboardType: TextInputType.emailAddress,
-        validator: validarCampo('email', Validacoes.todas([Validacoes.tamanhoMaximo(150), Validacoes.email])),
-        onChanged: (_) => campoAlterado('email'),
-        textInputAction: TextInputAction.next,
+      CampoDoFormulario(
+        TextFormField(
+          controller: _email,
+          decoration: const InputDecoration(labelText: 'E-mail'),
+          keyboardType: TextInputType.emailAddress,
+          validator: validarCampo('email', Validacoes.todas([Validacoes.tamanhoMaximo(150), Validacoes.email])),
+          onChanged: (_) => campoAlterado('email'),
+          textInputAction: TextInputAction.next,
+        ),
       ),
-      TextFormField(
-        controller: _telefone,
-        decoration: const InputDecoration(labelText: 'Telefone'),
-        keyboardType: TextInputType.phone,
-        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9()+\- ]'))],
-        validator: validarCampo('telefone', Validacoes.tamanhoMaximo(20)),
-        onChanged: (_) => campoAlterado('telefone'),
-        onFieldSubmitted: (_) => unawaited(_salvar()),
+      CampoDoFormulario(
+        TextFormField(
+          controller: _telefone,
+          decoration: const InputDecoration(labelText: 'Telefone'),
+          keyboardType: TextInputType.phone,
+          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9()+\- ]'))],
+          validator: validarCampo('telefone', Validacoes.tamanhoMaximo(20)),
+          onChanged: (_) => campoAlterado('telefone'),
+          onFieldSubmitted: (_) => unawaited(_salvar()),
+        ),
       ),
     ],
   );

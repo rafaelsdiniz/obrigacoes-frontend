@@ -4,6 +4,7 @@ import '../dominio/filtro_cadastro.dart';
 import '../dominio/situacao.dart';
 import '../dominio/termos_do_cadastro.dart';
 import 'campo_busca.dart';
+import 'controle_segmentado.dart';
 
 class FiltrosDeCadastro extends StatelessWidget {
   const FiltrosDeCadastro({
@@ -15,6 +16,9 @@ class FiltrosDeCadastro extends StatelessWidget {
     super.key,
   });
 
+  static const _larguraDaBusca = 420.0;
+  static const _larguraParaBuscaAoLadoDoFiltro = 680.0;
+
   final String dica;
   final TermosDoCadastro termos;
   final FiltroCadastro filtro;
@@ -22,25 +26,26 @@ class FiltrosDeCadastro extends StatelessWidget {
   final ValueChanged<Situacao?> aoFiltrarPorSituacao;
 
   @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: 16,
-    runSpacing: 12,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    children: [
-      ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: CampoBusca(dica: dica, valorInicial: filtro.busca, aoBuscar: aoBuscar),
-      ),
-      SegmentedButton<Situacao?>(
-        showSelectedIcon: false,
-        segments: [
-          ButtonSegment(value: null, label: Text(termos.todos)),
-          ButtonSegment(value: Situacao.ativo, label: Text(termos.ativos)),
-          ButtonSegment(value: Situacao.inativo, label: Text(termos.inativos)),
-        ],
-        selected: {filtro.situacao},
-        onSelectionChanged: (selecao) => aoFiltrarPorSituacao(selecao.single),
-      ),
-    ],
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, restricoes) => Wrap(
+      spacing: 16,
+      runSpacing: 12,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        SizedBox(
+          width: restricoes.maxWidth < _larguraParaBuscaAoLadoDoFiltro ? restricoes.maxWidth : _larguraDaBusca,
+          child: CampoBusca(dica: dica, valorInicial: filtro.busca, aoBuscar: aoBuscar),
+        ),
+        ControleSegmentado<Situacao?>(
+          opcoes: [
+            (valor: null, rotulo: termos.todos),
+            (valor: Situacao.ativo, rotulo: termos.ativos),
+            (valor: Situacao.inativo, rotulo: termos.inativos),
+          ],
+          selecionado: filtro.situacao,
+          aoSelecionar: aoFiltrarPorSituacao,
+        ),
+      ],
+    ),
   );
 }

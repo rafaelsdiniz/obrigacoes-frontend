@@ -41,14 +41,17 @@ class _CampoBuscaState extends State<CampoBusca> {
   Widget build(BuildContext context) => TextField(
     controller: _controlador,
     onChanged: _agendar,
+    textInputAction: TextInputAction.search,
     decoration: InputDecoration(
       hintText: widget.dica,
-      prefixIcon: const Icon(Icons.search),
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+      prefixIcon: const Icon(Icons.search_rounded, size: 20),
       suffixIcon: ListenableBuilder(
         listenable: _controlador,
         builder: (context, _) => _controlador.text.isEmpty
             ? const SizedBox.shrink()
-            : IconButton(tooltip: 'Limpar busca', onPressed: _limpar, icon: const Icon(Icons.close)),
+            : IconButton(tooltip: 'Limpar busca', onPressed: _limpar, icon: const Icon(Icons.cancel_rounded, size: 18)),
       ),
     ),
   );

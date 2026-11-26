@@ -8,12 +8,13 @@ class PaginaNaoEncontrada extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(),
-    body: AvisoDeEstado(
-      icone: Icons.search_off,
-      titulo: 'Página não encontrada',
-      mensagem: 'O endereço acessado não existe ou foi removido.',
-      acao: FilledButton.tonal(onPressed: () => context.go('/'), child: const Text('Ir para o início')),
+    body: SafeArea(
+      child: AvisoDeEstado(
+        icone: Icons.explore_off_rounded,
+        titulo: 'Página não encontrada',
+        mensagem: 'O endereço acessado não existe ou foi removido.',
+        acao: FilledButton(onPressed: () => context.go('/'), child: const Text('Ir para o início')),
+      ),
     ),
   );
 }

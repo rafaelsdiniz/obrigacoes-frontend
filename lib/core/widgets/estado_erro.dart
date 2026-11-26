@@ -14,9 +14,9 @@ class EstadoErro extends StatelessWidget {
     icone: Icons.cloud_off_outlined,
     titulo: 'Não foi possível carregar',
     mensagem: ErroApi.mensagemPara(erro),
-    acao: FilledButton.tonalIcon(
+    acao: FilledButton.icon(
       onPressed: aoTentarNovamente,
-      icon: const Icon(Icons.refresh),
+      icon: const Icon(Icons.refresh_rounded, size: 20),
       label: const Text('Tentar novamente'),
     ),
   );
