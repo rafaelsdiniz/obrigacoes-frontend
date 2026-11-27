@@ -71,7 +71,7 @@ class _DetalheState extends ConsumerState<_Detalhe> {
         avisarSucesso(context, 'Obrigação ${proximo == StatusObrigacao.concluida ? 'concluída' : 'iniciada'}.');
       }
     } catch (erro, pilha) {
-      if (_statusMudouNoServidor(erro)) {
+      if (mounted && _statusMudouNoServidor(erro)) {
         ref
           ..invalidate(obrigacaoProvider(widget.obrigacao.id))
           ..invalidate(historicoDaObrigacaoProvider(widget.obrigacao.id));
