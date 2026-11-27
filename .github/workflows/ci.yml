@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -44,6 +44,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Cobertura mínima
+        shell: bash
         run: |
           awk -F: -v minimo="$COBERTURA_MINIMA" '/^LF:/ { total += $2 } /^LH:/ { cobertas += $2 }
             END {
