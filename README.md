@@ -82,6 +82,8 @@ docker compose up -d --build
 | Aplicativo | http://localhost:3000 |
 | API | http://localhost:8080 |
 
+O `--build` constrói só a API. O aplicativo vem da imagem publicada por este repositório no GHCR (`ghcr.io/rafaelsdiniz/obrigacoes-frontend:latest`). Para abrir o aplicativo de outra máquina, defina `API_URL_PUBLICA` com o endereço da API visto por ela, e inclua o endereço do aplicativo em `CORS_ALLOWED_ORIGINS`.
+
 Para rodar só a imagem deste repositório, com a API já em execução:
 
 ```bash
@@ -95,9 +97,11 @@ Pré-requisitos: Flutter 3.50 ou superior e a API em execução.
 
 ```bash
 flutter pub get
-flutter run -d chrome      # web
-flutter run                # Android, com o emulador aberto (a API é acessada por 10.0.2.2)
+flutter run -d chrome --web-port 8081   # web
+flutter run                             # Android, com o emulador aberto (a API é acessada por 10.0.2.2)
 ```
+
+Na web, a porta 8081 é a que a API já libera no CORS junto com a 3000. Em outra porta, o navegador bloqueia as chamadas e o aplicativo mostra que não conseguiu conectar ao servidor.
 
 ## Configuração do ambiente
 
@@ -199,7 +203,7 @@ As decisões do sistema estão registradas nos [ADRs do backend](https://github.
 ## Melhorias futuras
 
 - Login e perfis de acesso, acompanhando a autenticação da API.
-- Busca dentro dos seletores de empresa e responsável (hoje até 100 cadastros ativos por lista).
+- Busca dentro dos seletores de empresa e responsável e dos filtros da lista de obrigações (hoje até 100 cadastros por lista).
 - Progresso em porcentagem no envio de anexos e pré-visualização de PDFs e imagens.
 - Notificações de vencimento no aplicativo.
 - Testes de ponta a ponta automatizados (`integration_test`) contra a API real no CI.
