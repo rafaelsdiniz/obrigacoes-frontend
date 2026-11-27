@@ -76,6 +76,7 @@ class _CampoDeDataState extends State<CampoDeData> {
         const SingleActivator(LogicalKeyboardKey.space): _abrirCalendario,
       },
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: _controlador,
         readOnly: true,
         onTap: _abrirCalendario,

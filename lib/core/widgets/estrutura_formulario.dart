@@ -41,7 +41,6 @@ class EstruturaFormulario extends StatelessWidget {
         const SizedBox(height: 28),
         Form(
           key: chave,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Grupo(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

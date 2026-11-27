@@ -75,6 +75,16 @@ void main() {
     verifyNever(() => repositorio.cadastrar(any()));
   });
 
+  testWidgets('aponta erro só no campo que o usuário já preencheu', (tester) async {
+    await abrir(tester, rota: '/empresas/nova');
+
+    await tester.enterText(campo('CNPJ'), '11222333000182');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Informe um CNPJ válido.'), findsOneWidget);
+    expect(find.text('A razão social é obrigatória.'), findsNothing);
+  });
+
   testWidgets('cadastra a empresa e volta para a lista', (tester) async {
     when(() => repositorio.cadastrar(any())).thenAnswer((_) async => empresaDeExemplo());
     await abrir(tester, rota: '/empresas/nova');
