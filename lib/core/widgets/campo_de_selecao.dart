@@ -33,6 +33,7 @@ class CampoDeSelecao<T> extends StatelessWidget {
     rotulo: rotulo,
     obrigatorio: obrigatorio,
     child: DropdownButtonFormField<T>(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: ValueKey(_valorEntreAsOpcoes != null),
       initialValue: _valorEntreAsOpcoes,
       isExpanded: true,

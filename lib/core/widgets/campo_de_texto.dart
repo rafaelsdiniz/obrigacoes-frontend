@@ -41,6 +41,7 @@ class CampoDeTexto extends StatelessWidget {
     rotulo: rotulo,
     obrigatorio: obrigatorio,
     child: TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controlador,
       decoration: InputDecoration(hintText: dica, helperText: ajuda, helperMaxLines: 2, errorMaxLines: 3),
       validator: validador,
